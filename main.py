@@ -10,9 +10,14 @@ def prochaine_etape(grille):
 
     return nouvelle_grille
 
+def nVoisinsComtamine(L, x, y):
+    nbVoisins = O
+    for changeY in range(-1, 2):
+            for changeX in range(-1, 2):
+                if 0 <= x + changeX < len(L) and 0 <= y + changeY < len(L):
+                    if L[y+changeY][x+changeX] == 1:
+                        nbVoisins += 1
+    return nbVoisins
 
-grille = [  [0, 1, 0],
-            [0, 1, 0],
-            [0, 1, 0]]
-            
-print(grille)
+def caseContamine(L, x, y, R):
+    return nVoisinsContamine(L, x, y)//R[0] > random.random()
