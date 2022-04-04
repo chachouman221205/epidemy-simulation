@@ -17,7 +17,7 @@ def n_voisins_contamine(L, x, y):
     for change_x in range(-1, 2):
             for change_y in range(-1, 2):
                 if 0 <= x + change_x < len(L) and 0 <= y + change_y < len(L):
-                    if L[y + change_y][x + change_x] == 1:
+                    if type(L[y + change_y][x + change_x]) == int:
                         nb_voisins += 1
     return nb_voisins
 
@@ -26,7 +26,7 @@ def case_est_contamine(L, x, y, R):
 
 def case_contamine(L, x, y, R):
     if case_est_contamine(L, x, y, R):
-        L[y][x] = 1
+        L[y][x] = random.randint(R["tps_min"], R["tps_max"])
 
 # Initialisation des variables
 
