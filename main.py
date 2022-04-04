@@ -22,8 +22,12 @@ def n_voisins_contamine(L, x, y):
     return nb_voisins
 
 def case_est_contamine(L, x, y, R):
-    return n_voisins_contamine(L, x, y)/R[0] > random.random()
+    return n_voisins_contamine(L, x, y)/R["nb_voisins"] > random.random()
 
 def case_contamine(L, x, y, R):
     if case_est_contamine(L, x, y, R):
         L[y][x] = 1
+
+# Initialisation des variables
+
+R = {"nb_voisins": 3, "tps_min": 8,"tps_max": 10, "proba_mort": 0.01}
