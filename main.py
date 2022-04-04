@@ -19,5 +19,9 @@ def nVoisinsComtamine(L, x, y):
                         nbVoisins += 1
     return nbVoisins
 
-def caseContamine(L, x, y, R):
+def caseEstContamine(L, x, y, R):
     return nVoisinsContamine(L, x, y)//R[0] > random.random()
+
+def caseContamine(L, x, y, R):
+    if caseEstContamine(L, x, y, R):
+        L[y][x] = 1
