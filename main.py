@@ -1,3 +1,5 @@
+import random
+
 def prochaine_etape(grille):
 
     x_max = len(grille[0])
@@ -20,7 +22,7 @@ def n_voisins_contamine(L, x, y):
     return nb_voisins
 
 def case_est_contamine(L, x, y, R):
-    return n_voisins_contamine(L, x, y)//R[0] > random.random()
+    return n_voisins_contamine(L, x, y)/R[0] > random.random()
 
 def case_contamine(L, x, y, R):
     if case_est_contamine(L, x, y, R):
