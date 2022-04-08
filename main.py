@@ -28,6 +28,14 @@ def case_contamine(L, x, y, R):
     if case_est_contamine(L, x, y, R):
         L[y][x] = random.randint(R["tps_min"], R["tps_max"])
 
+def case_est_mort(L, x, y, R, V):
+    if type(L[y][x]) == int:
+        return random.random()*V[y][x] < R["proba_mort"]
+
+def case_mort(L, x, y, R, V):
+    if case_est_mort(L, x, y, R, V):
+        L[y][x] = "M"
+
 # Initialisation des variables
 
 R = {"nb_voisins": 3, "tps_min": 8,"tps_max": 10, "proba_mort": 0.01}
