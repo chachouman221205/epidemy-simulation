@@ -13,7 +13,7 @@ def prochaine_etape(grille):
     return nouvelle_grille
 
 def n_voisins_contamine(L, x, y):
-    nb_voisins = O
+    nb_voisins = 0
     for change_x in range(-1, 2):
             for change_y in range(-1, 2):
                 if 0 <= x + change_x < len(L) and 0 <= y + change_y < len(L):
