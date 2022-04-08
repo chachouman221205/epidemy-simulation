@@ -1,5 +1,6 @@
 from tkinter import *
 from functools import partial
+import erreur
 
 def confirmer(fen, infection, recuperation_min, recuperation_max, mortalite):
     infection = infection.get()
@@ -12,7 +13,7 @@ def confirmer(fen, infection, recuperation_min, recuperation_max, mortalite):
     if infection == 0:
         infection = 0.1
     if recuperation_max < recuperation_min:
-        return False
+        erreur.erreur("problème de règle", "ATTENTION: Le temps de récupération maximum doit être supérieur au temps de récupération minimum")
         
     R = {"nb_voisins":infection, "recup_min": recuperation_min, "recup_max":recuperation_max, "proba_mort":mortalite}
     
@@ -20,7 +21,6 @@ def confirmer(fen, infection, recuperation_min, recuperation_max, mortalite):
 
 def nouvelle_regle():
     fen = Tk()
-    fen.title('Paramètres')
     infection = Scale(fen, orient='horizontal', from_=0,to=8, resolution=0.1, tickinterval=0.5, length=350, label="Nombre minimum de voisin pour être infecté")
     infection.pack()
     recuperation_min = Scale(fen, orient='horizontal', from_=0,to=10, resolution=0.1, tickinterval=1, length=350, label="Nombre minimum de jours pour être soigné")
