@@ -31,3 +31,4 @@ def case_contamine(L, x, y, R):
 # Initialisation des variables
 
 R = {"nb_voisins": 3, "tps_min": 8,"tps_max": 10, "proba_mort": 0.01}
+V = [[1 for y in range(10)] for x in range(10)] # Liste de vulnérabilité à la mort
