@@ -59,7 +59,7 @@ def case_oubli(L, nL, x, y, R):
 
 def case_est_mort(L, x, y, R, V):
     if type(L[y][x]) == int:
-        return random.random()*V[y][x] < R["proba_mort"]
+        return random.random() < R["proba_mort"] * V[y][x]
 
 def case_mort(L, nL, x, y, R, V):
     global compteur
