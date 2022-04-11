@@ -4,9 +4,10 @@ made for a school project. not meant to be good.
 conventions:
 -liste de règles R = {
   "nb_voisins": nombre de voisins contaminé minimum requis pour contamination garantie,
-  "tps_min": nombre de temps minimum requis avant de ne plus etre contaminé,
-  "tps_max": nombre de temps maximum requis avant de ne plus etre contaminé,
-  "proba_mort": probabilité de mourir chaque jour pour une personne contaminée
+  "recup_min": nombre de temps minimum requis avant de ne plus etre contaminé,
+  "recup_max": nombre de temps maximum requis avant de ne plus etre contaminé,
+  "proba_mort": probabilité de mourir chaque jour pour une personne contaminée,
+  "proba_oubli": probabilité de redevenir susceptible à l'infection chaque jour pour une personne soignée
   }
 
 -état de chaque case:

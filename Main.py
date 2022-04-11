@@ -3,15 +3,17 @@ from tkinter import *
 import regles 
 import erreur  
 
+
 def etat_suivant(L, nL, x, y, R, V):
     if type(L[y][x]) == int:
         if L[y][x] >= 2:
             nL[y][x] = L[y][x]-1
+            case_mort(L, nL, x, y, R, V)
         else:
             nL[y][x] = "R"
+            compteur.set(compteur.get()-1)
     else:
         case_oubli(L, nL, x, y, R)
-        case_mort(L, nL, x, y, R, V)
         case_contamine(L, nL, x, y, R)
 
 def prochaine_etape(grille):
@@ -19,11 +21,24 @@ def prochaine_etape(grille):
     x_max = len(grille[0])
     y_max = len(grille)
     nouvelle_grille = grille
+    nb_mort, nb_recovered, nb_safe, nb_infecte = 0, 0, 0, 0
     
     for y in range(y_max):
         for x in range(x_max):
             etat_suivant(grille, nouvelle_grille, x, y, R, V)
-
+            if nouvelle_grille[y][x] == 'R':
+                nb_recovered += 1
+            elif nouvelle_grille[y][x] == 'M':
+                nb_mort += 1
+            elif nouvelle_grille[y][x] == 'S':
+                nb_safe += 1
+            else:
+                nb_infecte += 1
+    historique["S"].append(nb_safe)
+    historique["M"].append(nb_mort)
+    historique["R"].append(nb_recovered)
+    historique["I"].append(nb_infecte)
+    update_labels()
     return nouvelle_grille
 
 def n_voisins_contamine(L, x, y):
@@ -41,8 +56,11 @@ def case_est_contamine(L, x, y, R):
     return n_voisins_contamine(L, x, y)/R["nb_voisins"] > random.random() and L[y][x] == "S"
 
 def case_contamine(L, nL, x, y, R):
+    global compteur
     if case_est_contamine(L, x, y, R):
         nL[y][x] = random.randint(R["recup_min"], R["recup_max"])
+        compteur.set(compteur.get()+1)
+        
 
 def case_est_oubli(L, x, y, R):
     if L[y][x] == "R":
@@ -54,21 +72,27 @@ def case_oubli(L, nL, x, y, R):
 
 def case_est_mort(L, x, y, R, V):
     if type(L[y][x]) == int:
-        return random.random()*V[y][x] < R["proba_mort"]
+        return random.random() < R["proba_mort"] * V[y][x]
 
 def case_mort(L, nL, x, y, R, V):
+    global compteur
     if case_est_mort(L, x, y, R, V):
         nL[y][x] = "M"
+        compteur.set(compteur.get()-1)
 
 def Recommencer():
-    global grille,ligne
+    global compteur, historique
+    grille = []
     for y in range (0,10):
+        ligne = []
         for x in range (0,10):
             can1.create_rectangle(x*30,y*30,x*30+30,y*30+30,fill = 'white')
             ligne.append("S")
         grille.append(ligne)
-        ligne = []
-        compteur.set(0)
+        historique = {"S": [], "M": [], "I": [], "R": []}
+    compteur = 0
+
+    return grille
 
 def click(event):
     global compteur, grille, R
@@ -79,7 +103,6 @@ def click(event):
         can1.create_rectangle(x*30,y*30,x*30+30,y*30+30,fill = 'red')
     else :
         erreur.erreur('Infection','Cette personne ne peut pas être infectée')
-    Compter()
 
 def infect():
     global compteur, grille
@@ -89,13 +112,13 @@ def infect():
     grille[y][x] = random.randint(R["recup_min"], R["recup_max"])
     case_libre.remove(l)  
     can1.create_rectangle(x*30,y*30,x*30+30,y*30+30,fill = 'red')
-    Compter()
+    compteur.set(compteur.get()+1)
+    update_labels()
     
 def nouvelle_regle():
     global R 
     regles.nouvelle_regle()
     R = regles.R
-    
 
 def dessiner(grille):
     global couleurs
@@ -112,47 +135,39 @@ def simuler():
     grille = prochaine_etape(grille)
     print(grille)
     dessiner(grille)
-    Compter()
-    
-def Compter():
-    global compteur, grille
-    infectes = 0
-    for y in grille:
-        for x in y:
-            if type(x)== int:
-                infectes += 1
-    compteur.set(infectes)
 
-
+def update_labels():
+    global compteur, label_text
+    label_text.set("Nombre d'infectés: " + str(compteur.get()))   
 
 # Initialisation des variables
 
 R = {"nb_voisins": 3, "recup_min": 8,"recup_max": 10, "proba_mort": 0.1, "proba_oubli": 0.1}
 V = [[1 for y in range(10)] for x in range(10)] # Liste de vulnérabilité à la mort
-
+historique = {"S": [], "M": [], "I": [], "R": []}
 
 fen1 = Tk()
 fen1.title('Simulation')
 fen1.geometry('500x500')
-can1 = Canvas(fen1,bg='white',height=300,width=300)
 
+can1 = Canvas(fen1,bg='white',height=300,width=300)
+can1.pack()
 
 case_libre = [e for e in range (0,100)]
-grille = []
-ligne = []
-coul = 'white'
-couleurs = {"M":'black',"R":"grey","S":"white"} 
-compteur = IntVar(value=0)
-              
-bou3 = Button(fen1,text='Infection',command=infect)
-bou4 = Button(fen1,text='simuler',command=simuler)
+grille = Recommencer()
 
-for y in range (0,10):
-    for x in range (0,10):
-        can1.create_rectangle(x*30,y*30,x*30+30,y*30+30,fill = coul)
-        ligne.append("S")
-    grille.append(ligne)
-    ligne = []
+couleurs = {"M":'black',"R":"grey","S":"white"}   
+compteur = IntVar(value=0)
+label_text = StringVar(value="Nombre d'inféctés: " + str(compteur.get()))
+Label(textvariable=label_text).pack()
+
+bou3 = Button(fen1,text='Infection',command=infect)
+bou3.pack(side=RIGHT)
+
+bou4 = Button(fen1,text='simuler',command=simuler)
+bou4.pack(side=RIGHT)
+
+can1.bind("<Button-1>", click)
 
 menubar = Menu(fen1)
 
@@ -168,9 +183,8 @@ menu2.add_command(label="Réinitialiser", command=Recommencer)
 menu2.add_command(label="Modifier", command=nouvelle_regle)
 menubar.add_cascade(label="Affichage", menu=menu2)
 
-can1.bind("<Button-1>", click)
-
 fen1.config(menu=menubar)
+
 bou3.grid(row=3,column=2, ipadx=30, ipady=10)
 bou4.grid(row=4,column=2, ipadx=30, ipady=10)
 Label(text='hello:').grid(row=4,column=1, ipadx=20)
