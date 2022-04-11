@@ -80,7 +80,7 @@ def case_mort(L, nL, x, y, R, V):
         compteur.set(compteur.get()-1)
 
 def Recommencer():
-    global compteur
+    global compteur, historique
     grille = []
     for y in range (0,10):
         ligne = []
@@ -88,7 +88,7 @@ def Recommencer():
             can1.create_rectangle(x*30,y*30,x*30+30,y*30+30,fill = 'white')
             ligne.append("S")
         grille.append(ligne)
-        
+        historique = {"S": [], "M": [], "I": [], "R": []}
     compteur = 0
 
     return grille
