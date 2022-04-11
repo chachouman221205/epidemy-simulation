@@ -1,7 +1,6 @@
 import random
 from tkinter import *
 import regles as regles
-import erreur as erreur
 
 def etat_suivant(L, nL, x, y, R, V):
     if type(L[y][x]) == int:
@@ -59,15 +58,6 @@ def case_est_mort(L, x, y, R, V):
 def case_mort(L, nL, x, y, R, V):
     if case_est_mort(L, x, y, R, V):
         nL[y][x] = "M"
-        
-def Compteur ():
-    global grille
-    i = 0
-    for y in grille:
-        for x in y:
-            if type(x)== int:
-                i += 1
-    compteur.set(i)
 
 def Recommencer():
     global grille,ligne
@@ -76,9 +66,8 @@ def Recommencer():
             can1.create_rectangle(x*30,y*30,x*30+30,y*30+30,fill = 'white')
             ligne.append("S")
         grille.append(ligne)
-    ligne = []
-    compteur.set(0)
-    print (grille)
+        ligne = []
+        compteur.set(0)
 
 def click(event):
     global compteur, grille, R
@@ -86,7 +75,7 @@ def click(event):
     y = event.y//30
     grille[y][x] = random.randint(R["recup_min"], R["recup_max"])
     can1.create_rectangle(x*30,y*30,x*30+30,y*30+30,fill = 'red')
-    Compteur()
+    Compter()
 
 def infect():
     global compteur, grille
@@ -96,7 +85,7 @@ def infect():
     grille[y][x] = random.randint(R["recup_min"], R["recup_max"])
     case_libre.remove(l)  
     can1.create_rectangle(x*30,y*30,x*30+30,y*30+30,fill = 'red')
-    Compteur()
+    Compter()
     
 def nouvelle_regle():
     global R 
@@ -115,9 +104,20 @@ def dessiner(grille):
 
 def simuler():
     global grille
+    print(grille)
     grille = prochaine_etape(grille)
+    print(grille)
     dessiner(grille)
-    Compteur()
+    Compter()
+    
+def Compter():
+    global compteur, grille
+    infectes = 0
+    for y in grille:
+        for x in y:
+            if type(x)== int:
+                infectes += 1
+    compteur.set(infectes)
 
 
 
@@ -169,7 +169,6 @@ can1.bind("<Button-1>", click)
 fen1.config(menu=menubar)
 bou3.pack(side=RIGHT)
 bou4.pack(side=RIGHT)
-Label(text='Nombre de Victimes').pack()
 Label(textvariable=compteur).pack()
 can1.pack()
 
