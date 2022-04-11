@@ -1,7 +1,8 @@
 import random
 from tkinter import *
-import regles
-import erreur
+import regles 
+import erreur  
+
 
 def etat_suivant(L, nL, x, y, R, V):
     if type(L[y][x]) == int:
@@ -97,10 +98,11 @@ def click(event):
     global compteur, grille, R
     x = event.x//30
     y = event.y//30
-    grille[y][x] = random.randint(R["recup_min"], R["recup_max"])
-    can1.create_rectangle(x*30,y*30,x*30+30,y*30+30,fill = 'red')
-    compteur.set(compteur.get()+1)
-    update_labels()
+    if grille[y][x] == 'S':
+        grille[y][x] = random.randint(R["recup_min"], R["recup_max"])
+        can1.create_rectangle(x*30,y*30,x*30+30,y*30+30,fill = 'red')
+    else :
+        erreur.erreur('Infection','Cette personne ne peut pas être infectée')
 
 def infect():
     global compteur, grille
@@ -146,7 +148,8 @@ historique = {"S": [], "M": [], "I": [], "R": []}
 
 fen1 = Tk()
 fen1.title('Simulation')
-fen1.geometry('350x350')
+fen1.geometry('500x500')
+
 can1 = Canvas(fen1,bg='white',height=300,width=300)
 can1.pack()
 
@@ -181,5 +184,10 @@ menu2.add_command(label="Modifier", command=nouvelle_regle)
 menubar.add_cascade(label="Affichage", menu=menu2)
 
 fen1.config(menu=menubar)
+
+bou3.grid(row=3,column=2, ipadx=30, ipady=10)
+bou4.grid(row=4,column=2, ipadx=30, ipady=10)
+Label(text='hello:').grid(row=4,column=1, ipadx=20)
+can1.grid(row=2,column=2)
 
 mainloop()
