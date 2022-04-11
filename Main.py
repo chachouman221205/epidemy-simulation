@@ -6,11 +6,11 @@ def etat_suivant(L, nL, x, y, R, V):
     if type(L[y][x]) == int:
         if L[y][x] >= 2:
             nL[y][x] = L[y][x]-1
+            case_mort(L, nL, x, y, R, V)
         else:
             nL[y][x] = "R"
     else:
         case_oubli(L, nL, x, y, R)
-        case_mort(L, nL, x, y, R, V)
         case_contamine(L, nL, x, y, R)
 
 def prochaine_etape(grille):
