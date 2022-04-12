@@ -101,19 +101,24 @@ def click(event):
     if grille[y][x] == 'S':
         grille[y][x] = random.randint(R["recup_min"], R["recup_max"])
         can1.create_rectangle(x*30,y*30,x*30+30,y*30+30,fill = 'red')
+        compteur.set(compteur.get()+1)
+        update_labels()
     else :
         erreur.erreur('Infection','Cette personne ne peut pas être infectée')
 
 def infect():
     global compteur, grille
-    l = random.choice(case_libre)
-    x = l%10
-    y = (l-x)//10
-    grille[y][x] = random.randint(R["recup_min"], R["recup_max"])
-    case_libre.remove(l)  
-    can1.create_rectangle(x*30,y*30,x*30+30,y*30+30,fill = 'red')
-    compteur.set(compteur.get()+1)
-    update_labels()
+    if len(case_libre) > 0:
+        l = random.choice(case_libre)
+        x = l%10
+        y = (l-x)//10
+        grille[y][x] = random.randint(R["recup_min"], R["recup_max"])
+        case_libre.remove(l)  
+        can1.create_rectangle(x*30,y*30,x*30+30,y*30+30,fill = 'red')
+        compteur.set(compteur.get()+1)
+        update_labels()
+    else:
+        erreur.erreur('Infection','Aucune case ne peut être infectée')
     
 def nouvelle_regle():
     global R 
@@ -131,9 +136,7 @@ def dessiner(grille):
 
 def simuler():
     global grille
-    print(grille)
     grille = prochaine_etape(grille)
-    print(grille)
     dessiner(grille)
 
 def update_labels():
@@ -142,32 +145,37 @@ def update_labels():
 
 # Initialisation des variables
 
-R = {"nb_voisins": 3, "recup_min": 8,"recup_max": 10, "proba_mort": 0.1, "proba_oubli": 0.1}
+R = {"nb_voisins": 3, "recup_min": 8,"recup_max": 10, "proba_mort": 0.01, "proba_oubli": 0.1}
 V = [[1 for y in range(10)] for x in range(10)] # Liste de vulnérabilité à la mort
 historique = {"S": [], "M": [], "I": [], "R": []}
+couleurs = {"M":'black',"R":"light grey","S":"white"} 
+case_libre = [e for e in range (0,100)]  
 
 fen1 = Tk()
 fen1.title('Simulation')
 fen1.geometry('500x500')
 
 can1 = Canvas(fen1,bg='white',height=300,width=300)
-can1.pack()
+can1.grid(row=0,column=1)
 
-case_libre = [e for e in range (0,100)]
+can2 = Canvas(fen1,bg='white',height=300,width=300)
+can2.grid(row=0,column=2)
+
+can3 = Canvas(fen1,bg='white',height=300,width=300)
+can3.grid(row=1,column=1)
+
 grille = Recommencer()
-
-couleurs = {"M":'black',"R":"grey","S":"white"}   
 compteur = IntVar(value=0)
 label_text = StringVar(value="Nombre d'inféctés: " + str(compteur.get()))
-Label(textvariable=label_text).pack()
+Label(can2,textvariable=label_text).grid(row=4,column=1, ipadx=20)
 
-bou3 = Button(fen1,text='Infection',command=infect)
-bou3.pack(side=RIGHT)
+bou3 = Button(can3,text='Infection',command=infect).grid(row=3,column=2, ipadx=30, ipady=10)
+bou4 = Button(can3,text='simuler',command=simuler).grid(row=4,column=2, ipadx=30, ipady=10)
 
-bou4 = Button(fen1,text='simuler',command=simuler)
-bou4.pack(side=RIGHT)
+
 
 can1.bind("<Button-1>", click)
+
 
 menubar = Menu(fen1)
 
@@ -184,10 +192,5 @@ menu2.add_command(label="Modifier", command=nouvelle_regle)
 menubar.add_cascade(label="Affichage", menu=menu2)
 
 fen1.config(menu=menubar)
-
-bou3.grid(row=3,column=2, ipadx=30, ipady=10)
-bou4.grid(row=4,column=2, ipadx=30, ipady=10)
-Label(text='hello:').grid(row=4,column=1, ipadx=20)
-can1.grid(row=2,column=2)
 
 mainloop()
