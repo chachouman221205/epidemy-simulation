@@ -60,6 +60,7 @@ def case_contamine(L, nL, x, y, R):
     if case_est_contamine(L, x, y, R):
         nL[y][x] = random.randint(R["recup_min"], R["recup_max"])
         compteur.set(compteur.get()+1)
+        case_libre.remove(y*10+x)
         
 
 def case_est_oubli(L, x, y, R):
@@ -69,6 +70,7 @@ def case_est_oubli(L, x, y, R):
 def case_oubli(L, nL, x, y, R):
     if case_est_oubli(L, x, y, R):
         nL[y][x] = "S"
+        case_libre.append(y*10+x)
 
 def case_est_mort(L, x, y, R, V):
     if type(L[y][x]) == int:
@@ -95,17 +97,42 @@ def Recommencer():
     return grille
 
 def click(event):
-    global compteur, grille, R
+    global compteur, grille, R, mode
     x = event.x//30
     y = event.y//30
-    if grille[y][x] == 'S':
-        grille[y][x] = random.randint(R["recup_min"], R["recup_max"])
-        can1.create_rectangle(x*30,y*30,x*30+30,y*30+30,fill = 'red')
-        compteur.set(compteur.get()+1)
-        update_labels()
-    else :
-        erreur.erreur('Infection','Cette personne ne peut pas être infectée')
-
+    
+    if mode == 0:
+        if grille[y][x] == 'S':
+            grille[y][x] = random.randint(R["recup_min"], R["recup_max"])
+            can1.create_rectangle(x*30,y*30,x*30+30,y*30+30,fill = 'red')
+            compteur.set(compteur.get()+1)
+            case_libre.remove(y*10+x)
+        else :
+            erreur.erreur('Infection','Cette personne ne peut pas être infectée')
+            
+    elif mode == -1:
+        if grille[y][x] != "M":
+            can1.create_rectangle(x*30,y*30,x*30+30,y*30+30,fill = 'black')
+            if type(grille[y][x])==int:
+                compteur.set(compteur.get()-1)
+            elif grille[y][x] == "S":
+                case_libre.remove(y*10+x)
+            grille[y][x] = "M"
+        else :
+            erreur.erreur('Tuer','Cette personne ne peut pas être Tuer')
+            
+    elif mode == 1:
+        if grille[y][x] != "S":
+            case_libre.append(y*10+x)
+            can1.create_rectangle(x*30,y*30,x*30+30,y*30+30,fill = 'white')
+            if type(grille[y][x])==int :
+                compteur.set(compteur.get()-1)
+            grille[y][x] = "S"
+        else :
+            erreur.erreur('Soigner','Cette personne ne peut pas être Soigner')
+            
+    update_labels()
+    
 def infect():
     global compteur, grille
     if len(case_libre) > 0:
@@ -135,13 +162,26 @@ def dessiner(grille):
                 can1.create_rectangle(x*30,y*30,x*30+30,y*30+30,fill = couleurs[grille[y][x]])
 
 def simuler():
-    global grille
+    global grille  
     grille = prochaine_etape(grille)
     dessiner(grille)
 
 def update_labels():
     global compteur, label_text
     label_text.set("Nombre d'infectés: " + str(compteur.get()))   
+    
+def mode_tuer():
+    global mode
+    mode = -1
+def mode_contaminer():
+    global mode
+    mode = 0
+def mode_soigner():
+    global mode
+    mode = 1
+def mode_vacciner():
+    global mode
+    mode = 2
 
 # Initialisation des variables
 
@@ -150,6 +190,7 @@ V = [[1 for y in range(10)] for x in range(10)] # Liste de vulnérabilité à la
 historique = {"S": [], "M": [], "I": [], "R": []}
 couleurs = {"M":'black',"R":"light grey","S":"white"} 
 case_libre = [e for e in range (0,100)]  
+mode = 0
 
 fen1 = Tk()
 fen1.title('Simulation')
@@ -190,6 +231,13 @@ menu2 = Menu(menubar, tearoff=0)
 menu2.add_command(label="Réinitialiser", command=Recommencer)
 menu2.add_command(label="Modifier", command=nouvelle_regle)
 menubar.add_cascade(label="Affichage", menu=menu2)
+
+menu3 = Menu(menubar, tearoff=0)
+menu3.add_command(label="Contaminer", command=mode_contaminer)
+menu3.add_command(label="Tuer", command=mode_tuer)
+menu3.add_command(label="Soigner", command=mode_soigner)
+menu3.add_command(label="Vacciner", command=mode_vacciner)
+menubar.add_cascade(label="Pointeur", menu=menu3)
 
 fen1.config(menu=menubar)
 
