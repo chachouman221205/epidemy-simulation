@@ -12,6 +12,8 @@ def etat_suivant(L, nL, x, y, R, V):
         else:
             nL[y][x] = "R"
             compteur.set(compteur.get()-1)
+    elif L[y][x] == "I":
+        L[y][x] = random.randint(R["recup_min"], R["recup_max"])
     else:
         case_oubli(L, nL, x, y, R)
         case_contamine(L, nL, x, y, R)
@@ -58,7 +60,7 @@ def case_est_contamine(L, x, y, R):
 def case_contamine(L, nL, x, y, R):
     global compteur
     if case_est_contamine(L, x, y, R):
-        nL[y][x] = random.randint(R["recup_min"], R["recup_max"])
+        nL[y][x] = "I"
         compteur.set(compteur.get()+1)
         case_libre.remove(y*10+x)
         
@@ -156,7 +158,7 @@ def dessiner(grille):
     global couleurs
     for y in range (0,10):
         for x in range (0,10):
-            if type(grille[y][x]) == int:
+            if type(grille[y][x]) == int or grille[y][x] == "I":
                 can1.create_rectangle(x*30,y*30,x*30+30,y*30+30,fill = 'red')
             else:
                 can1.create_rectangle(x*30,y*30,x*30+30,y*30+30,fill = couleurs[grille[y][x]])
