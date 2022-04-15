@@ -14,5 +14,6 @@ conventions:
   "S": susceptible à la contamination, safe,
   "R": récupéré, soigné, plus contaminé,
   "M": mort,
+  "I": qui vient d'être infecté, ne pouvant donc pas infecter les autres, et qui deviendra contagieux le jour suivant
   x = infecté, avec x le nombre de jours restants avant la récupération
   
