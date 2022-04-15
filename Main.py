@@ -2,7 +2,7 @@ import random
 from tkinter import *
 import regles 
 import erreur  
-
+import matplotlib.pyplot as plt
 
 def etat_suivant(L, nL, x, y, R, V):
     if type(L[y][x]) == int:
@@ -179,9 +179,9 @@ def dessiner(grille):
 
 def simuler():
     global grille, flag
+    grille = prochaine_etape(grille)
+    dessiner(grille)
     if flag:
-        grille = prochaine_etape(grille)
-        dessiner(grille)
         fen1.after(500, simuler)
     else:
         flag = True
@@ -205,6 +205,16 @@ def mode_soigner():
 def mode_vacciner():
     global mode
     mode = 2
+
+def afficher_graphique():
+    global historique
+
+    plt.axes().set_facecolor("grey")
+    plt.plot(historique["I"], color ="red")
+    plt.plot(historique["R"], color = "0.25")
+    plt.plot(historique["M"], color = "black")
+    plt.plot(historique["S"], color = "white")
+    plt.show()
 
 # Initialisation des variables
 
@@ -254,8 +264,9 @@ menu1.add_command(label="Quitter", command=quit)
 menubar.add_cascade(label="Virus", menu=menu1)
 
 menu2 = Menu(menubar, tearoff=0)
-menu2.add_command(label="Réinitialiser", command=Recommencer)
 menu2.add_command(label="Modifier", command=nouvelle_regle)
+menu2.add_command(label="Afficher le graphique", command=afficher_graphique)
+menu2.add_command(label="Réinitialiser", command=Recommencer)
 menubar.add_cascade(label="Affichage", menu=menu2)
 
 menu3 = Menu(menubar, tearoff=0)
