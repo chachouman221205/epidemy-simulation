@@ -236,8 +236,8 @@ Label(can2,textvariable=label_text).grid(row=4,column=1, ipadx=20)
 
 grille = Recommencer()
 
-bou3 = Button(can3,text='Infection',command=infect).grid(row=3,column=2, ipadx=30, ipady=10)
-bou4 = Button(can3,text='simuler',command=simuler).grid(row=4,column=2, ipadx=30, ipady=10)
+bou3 = Button(can3,text='Infection',command=infect).grid(row=0,column=2, ipadx=30, ipady=10)
+bou4 = Button(can3,text='simuler',command=simuler).grid(row=0,column=3, ipadx=30, ipady=10)
 
 
 
