@@ -88,8 +88,9 @@ def case_mort(L, nL, x, y, R, V):
         compteur.set(compteur.get()-1)
 
 def Recommencer():
-    global compteur, historique
+    global historique, grille, compteur, case_libre
     grille = []
+    case_libre = [e for e in range (0,100)] 
     for y in range (0,10):
         ligne = []
         for x in range (0,10):
@@ -97,7 +98,8 @@ def Recommencer():
             ligne.append("S")
         grille.append(ligne)
         historique = {"S": [], "M": [], "I": [], "R": [], "V": []}
-    compteur = 0
+    compteur.set(0)
+    update_labels()
 
     return grille
 
@@ -219,10 +221,12 @@ can2.grid(row=0,column=2)
 can3 = Canvas(fen1,bg='white',height=300,width=300)
 can3.grid(row=1,column=1)
 
-grille = Recommencer()
+
 compteur = IntVar(value=0)
 label_text = StringVar(value="Nombre d'inféctés: " + str(compteur.get()))
 Label(can2,textvariable=label_text).grid(row=4,column=1, ipadx=20)
+
+grille = Recommencer()
 
 bou3 = Button(can3,text='Infection',command=infect).grid(row=3,column=2, ipadx=30, ipady=10)
 bou4 = Button(can3,text='simuler',command=simuler).grid(row=4,column=2, ipadx=30, ipady=10)
