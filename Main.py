@@ -23,7 +23,7 @@ def prochaine_etape(grille):
     x_max = len(grille[0])
     y_max = len(grille)
     nouvelle_grille = grille
-    nb_mort, nb_recovered, nb_safe, nb_infecte = 0, 0, 0, 0
+    nb_mort, nb_recovered, nb_safe, nb_infecte, nb_vaccine = 0, 0, 0, 0, 0
     
     for y in range(y_max):
         for x in range(x_max):
@@ -34,12 +34,15 @@ def prochaine_etape(grille):
                 nb_mort += 1
             elif nouvelle_grille[y][x] == 'S':
                 nb_safe += 1
+            elif nouvelle_grille[y][x] == 'V':
+                nb_vaccine += 1
             else:
                 nb_infecte += 1
     historique["S"].append(nb_safe)
     historique["M"].append(nb_mort)
     historique["R"].append(nb_recovered)
     historique["I"].append(nb_infecte)
+    historique["V"].append(nb_vaccine)
     update_labels()
     return nouvelle_grille
 
@@ -93,7 +96,7 @@ def Recommencer():
             can1.create_rectangle(x*30,y*30,x*30+30,y*30+30,fill = 'white')
             ligne.append("S")
         grille.append(ligne)
-        historique = {"S": [], "M": [], "I": [], "R": []}
+        historique = {"S": [], "M": [], "I": [], "R": [], "V": []}
     compteur = 0
 
     return grille
@@ -121,7 +124,7 @@ def click(event):
                 case_libre.remove(y*10+x)
             grille[y][x] = "M"
         else :
-            erreur.erreur('Tuer','Cette personne ne peut pas être Tuer')
+            erreur.erreur('Tuer','Cette personne ne peut pas être Tuée')
             
     elif mode == 1:
         if grille[y][x] != "S":
@@ -131,8 +134,17 @@ def click(event):
                 compteur.set(compteur.get()-1)
             grille[y][x] = "S"
         else :
-            erreur.erreur('Soigner','Cette personne ne peut pas être Soigner')
-            
+            erreur.erreur('Soigner','Cette personne ne peut pas être Soignée')
+    elif mode == 2:
+        if grille[y][x] != "V":
+            can1.create_rectangle(x*30,y*30,x*30+30,y*30+30,fill = 'blue')
+            if type(grille[y][x])==int :
+                compteur.set(compteur.get()-1)
+            elif grille[y][x] == "S":
+                case_libre.remove(y*10+x)
+            grille[y][x] = "V"
+        else :
+            erreur.erreur('Vacciner','Cette personne ne peut pas être Vaccinée')
     update_labels()
     
 def infect():
@@ -189,8 +201,8 @@ def mode_vacciner():
 
 R = {"nb_voisins": 3, "recup_min": 8,"recup_max": 10, "proba_mort": 0.01, "proba_oubli": 0.1}
 V = [[1 for y in range(10)] for x in range(10)] # Liste de vulnérabilité à la mort
-historique = {"S": [], "M": [], "I": [], "R": []}
-couleurs = {"M":'black',"R":"light grey","S":"white"} 
+historique = {"S": [], "M": [], "I": [], "R": [], "V": []}
+couleurs = {"M":'black',"R":"light grey","S":"white","V":"blue"} 
 case_libre = [e for e in range (0,100)]  
 mode = 0
 
