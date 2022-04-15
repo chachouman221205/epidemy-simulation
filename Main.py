@@ -178,9 +178,16 @@ def dessiner(grille):
                 can1.create_rectangle(x*30,y*30,x*30+30,y*30+30,fill = couleurs[grille[y][x]])
 
 def simuler():
-    global grille  
-    grille = prochaine_etape(grille)
-    dessiner(grille)
+    global grille, flag
+    if flag:
+        grille = prochaine_etape(grille)
+        dessiner(grille)
+        fen1.after(500, simuler)
+    else:
+        flag = True
+def stop_simuler():
+    global flag
+    flag = False
 
 def update_labels():
     global compteur, label_text
@@ -207,6 +214,7 @@ historique = {"S": [], "M": [], "I": [], "R": [], "V": []}
 couleurs = {"M":'black',"R":"light grey","S":"white","V":"blue"} 
 case_libre = [e for e in range (0,100)]  
 mode = 0
+flag = True
 
 fen1 = Tk()
 fen1.title('Simulation')
