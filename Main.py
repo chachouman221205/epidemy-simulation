@@ -238,7 +238,7 @@ grille = Recommencer()
 
 bou3 = Button(can3,text='Infection',command=infect).grid(row=0,column=2, ipadx=30, ipady=10)
 bou4 = Button(can3,text='simuler',command=simuler).grid(row=0,column=3, ipadx=30, ipady=10)
-
+bou5 = Button(can3,text='pause',command=stop_simuler).grid(row=5,column=2, ipadx=30, ipady=10)
 
 
 can1.bind("<Button-1>", click)
