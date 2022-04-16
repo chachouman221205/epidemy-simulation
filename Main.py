@@ -169,7 +169,8 @@ def nouvelle_regle():
     R = regles.R
 
 def dessiner(grille):
-    global couleurs, historique
+    can1.delete("all")
+    global couleurs
     for y in range (0,10):
         for x in range (0,10):
             if type(grille[y][x]) == int or grille[y][x] == "I":
@@ -181,9 +182,8 @@ def simuler():
     global grille, flag
     grille = prochaine_etape(grille)
     dessiner(grille)
-    print(historique["I"][-1], historique["M"][-1], historique["R"][-1], historique["S"][-1])
     if flag:
-        fen1.after(500, simuler)
+        fen1.after(100, simuler)
     else:
         flag = True
 def stop_simuler():
