@@ -179,10 +179,12 @@ def dessiner(grille):
                 can1.create_rectangle(x*30,y*30,x*30+30,y*30+30,fill = couleurs[grille[y][x]])
 
 def simuler():
-    global grille, flag
+    global grille, flag, compteur
     grille = prochaine_etape(grille)
     dessiner(grille)
     if flag:
+        if compteur.get() == 0:
+            return
         fen1.after(100, simuler)
     else:
         flag = True
@@ -216,12 +218,12 @@ def afficher_graphique():
     for i in axe_x:
         histo2["M"].append(historique["M"][i])
         histo2["R"].append(histo2["M"][-1] + historique["R"][i])
-        histo2["S"].append(histo2["R"][-1] + historique["S"][i])
-        histo2["I"].append(histo2["S"][-1] + historique["I"][i])
+        histo2["I"].append(histo2["R"][-1] + historique["I"][i])
+        histo2["S"].append(histo2["I"][-1] + historique["S"][i])
 
     plt.axes().set_facecolor("0.15")
-    plt.fill_between(axe_x, histo2["S"], histo2["I"], color = "red")
-    plt.fill_between(axe_x, histo2["R"], histo2["S"], color = "white")
+    plt.fill_between(axe_x, histo2["I"], histo2["S"], color = "white")
+    plt.fill_between(axe_x, histo2["R"], histo2["I"], color = "red")
     plt.fill_between(axe_x, histo2["M"], histo2["R"], color = "grey")
     plt.fill_between(axe_x, histo2["M"], [0 for x in axe_x], color ="black")
     plt.show()
