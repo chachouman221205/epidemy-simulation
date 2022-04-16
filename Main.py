@@ -169,7 +169,7 @@ def nouvelle_regle():
     R = regles.R
 
 def dessiner(grille):
-    global couleurs
+    global couleurs, historique
     for y in range (0,10):
         for x in range (0,10):
             if type(grille[y][x]) == int or grille[y][x] == "I":
@@ -181,6 +181,7 @@ def simuler():
     global grille, flag
     grille = prochaine_etape(grille)
     dessiner(grille)
+    print(historique["I"][-1], historique["M"][-1], historique["R"][-1], historique["S"][-1])
     if flag:
         fen1.after(500, simuler)
     else:
@@ -208,12 +209,21 @@ def mode_vacciner():
 
 def afficher_graphique():
     global historique
+    histo2 = {"I":[],"M":[],"R":[],"S":[]}
 
-    plt.axes().set_facecolor("grey")
-    plt.plot(historique["I"], color ="red")
-    plt.plot(historique["R"], color = "0.25")
-    plt.plot(historique["M"], color = "black")
-    plt.plot(historique["S"], color = "white")
+    axe_x = list(range(len(historique["I"])))
+    
+    for i in axe_x:
+        histo2["M"].append(historique["M"][i])
+        histo2["R"].append(histo2["M"][-1] + historique["R"][i])
+        histo2["S"].append(histo2["R"][-1] + historique["S"][i])
+        histo2["I"].append(histo2["S"][-1] + historique["I"][i])
+
+    plt.axes().set_facecolor("0.15")
+    plt.fill_between(axe_x, histo2["S"], histo2["I"], color = "red")
+    plt.fill_between(axe_x, histo2["R"], histo2["S"], color = "white")
+    plt.fill_between(axe_x, histo2["M"], histo2["R"], color = "grey")
+    plt.fill_between(axe_x, histo2["M"], [0 for x in axe_x], color ="black")
     plt.show()
 
 # Initialisation des variables
