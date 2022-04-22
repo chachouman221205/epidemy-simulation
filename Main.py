@@ -185,7 +185,7 @@ def simuler():
     if flag:
         if compteur.get() == 0:
             return
-        fen1.after(100, simuler)
+        fen1.after(10, simuler)
     else:
         flag = True
 def stop_simuler():
@@ -193,8 +193,18 @@ def stop_simuler():
     flag = False
 
 def update_labels():
-    global compteur, label_text
-    label_text.set("Nombre d'infectés: " + str(compteur.get()))   
+    global compteur, label_text, label_text2
+    label_text.set("Nombre d'infectés: " + str(compteur.get()))
+    
+    if len(historique["M"])==0:
+        label_text2.set("Nombre de morts: " + str(0))
+    else:
+        label_text2.set("Nombre de morts: " + str(historique["M"][-1]))
+        
+    if len(historique["M"])==0:
+            label_text3.set("Nombre de vaccinés: " + str(0))
+    else:
+        label_text3.set("Nombre de vaccinés: " + str(historique["V"][-1]))
     
 def mode_tuer():
     global mode
@@ -220,13 +230,27 @@ def afficher_graphique():
         histo2["R"].append(histo2["M"][-1] + historique["R"][i])
         histo2["I"].append(histo2["R"][-1] + historique["I"][i])
         histo2["S"].append(histo2["I"][-1] + historique["S"][i])
+        
+        plt.axes().set_facecolor("0.15")
+        plt.fill_between(axe_x, histo2["I"], histo2["S"], color = "white")
+        plt.fill_between(axe_x, histo2["R"], histo2["I"], color = "red")
+        plt.fill_between(axe_x, histo2["M"], histo2["R"], color = "grey")
+        plt.fill_between(axe_x, histo2["M"], [0 for x in axe_x], color ="black")
+        plt.show()
 
-    plt.axes().set_facecolor("0.15")
-    plt.fill_between(axe_x, histo2["I"], histo2["S"], color = "white")
-    plt.fill_between(axe_x, histo2["R"], histo2["I"], color = "red")
-    plt.fill_between(axe_x, histo2["M"], histo2["R"], color = "grey")
-    plt.fill_between(axe_x, histo2["M"], [0 for x in axe_x], color ="black")
-    plt.show()
+def panneau_control():
+    global fen2, can3
+    fen2 = Tk()
+    fen2.title('Panneau_control')
+    fen2.geometry('500x500')
+    
+    can3 = Canvas(fen2,bg='white',height=300,width=300)
+    can3.grid(row=1,column=1)
+    
+    bou3 = Button(can3,text='Infection',command=infect).grid(row=0,column=2, ipadx=30, ipady=10)
+    bou4 = Button(can3,text='simuler',command=simuler).grid(row=0,column=3, ipadx=30, ipady=10)
+    bou5 = Button(can3,text='pause',command=stop_simuler).grid(row=0,column=1, ipadx=30, ipady=10)
+    bou6 = Button(can3,text='Vacciner',command=stop_simuler).grid(row=0,column=4, ipadx=30, ipady=10)
 
 # Initialisation des variables
 
@@ -248,20 +272,22 @@ can1.grid(row=0,column=1)
 can2 = Canvas(fen1,bg='white',height=300,width=300)
 can2.grid(row=0,column=2)
 
-can3 = Canvas(fen1,bg='white',height=300,width=300)
-can3.grid(row=1,column=1)
-
+can4 = Canvas(fen1,bg='white',height=300,width=300)
+can4.grid(row=1,column=1)
 
 compteur = IntVar(value=0)
 label_text = StringVar(value="Nombre d'inféctés: " + str(compteur.get()))
-Label(can2,textvariable=label_text).grid(row=4,column=1, ipadx=20)
+Label(can2,textvariable=label_text).grid(row=4,column=1, ipadx=30)
+
+label_text2 = StringVar(value="Nombre d'inféctés: " + str(0))
+Label(can2,textvariable=label_text2).grid(row=5,column=1, ipadx=30)
+
+label_text3 = StringVar(value="Nombre de vaccinés: " + str(0))
+Label(can2,textvariable=label_text3).grid(row=6,column=1, ipadx=30)
+
+bou1 = Button(can4,text='Infection',command=panneau_control).grid(row=0,column=2, ipadx=30, ipady=10)
 
 grille = Recommencer()
-
-bou3 = Button(can3,text='Infection',command=infect).grid(row=0,column=2, ipadx=30, ipady=10)
-bou4 = Button(can3,text='simuler',command=simuler).grid(row=0,column=3, ipadx=30, ipady=10)
-bou5 = Button(can3,text='pause',command=stop_simuler).grid(row=0,column=1, ipadx=30, ipady=10)
-
 
 can1.bind("<Button-1>", click)
 
