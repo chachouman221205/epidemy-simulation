@@ -24,6 +24,7 @@ def prochaine_etape(grille):
     y_max = len(grille)
     nouvelle_grille = grille
     nb_mort, nb_recovered, nb_safe, nb_infecte, nb_vaccine = 0, 0, 0, 0, 0
+    case_vaccine(grille, nouvelle_grille, R)
     
     for y in range(y_max):
         for x in range(x_max):
@@ -86,6 +87,10 @@ def case_mort(L, nL, x, y, R, V):
     if case_est_mort(L, x, y, R, V):
         nL[y][x] = "M"
         compteur.set(compteur.get()-1)
+
+def case_vaccine(L, nL, R):
+    if flag_vaccination and random.random() < R["proba_vaccination"]:
+        nL[random.randint(0, 9)][random.randint(0, 9)] = "V"
 
 def Recommencer():
     global historique, grille, compteur, case_libre
@@ -254,7 +259,7 @@ def panneau_control():
 
 # Initialisation des variables
 
-R = {"nb_voisins": 3, "recup_min": 8,"recup_max": 10, "proba_mort": 0.01, "proba_oubli": 0.1}
+R = {"nb_voisins": 3, "recup_min": 8,"recup_max": 10, "proba_mort": 0.01, "proba_oubli": 0.1, "proba_vaccination": 0.1}
 V = [[1 for y in range(10)] for x in range(10)] # Liste de vulnérabilité à la mort
 historique = {"S": [], "M": [], "I": [], "R": [], "V": []}
 couleurs = {"M":'black',"R":"light grey","S":"white","V":"blue"} 
