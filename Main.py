@@ -90,7 +90,7 @@ def Recommencer(taille_=None):
     if taille_ == None:
         global taille
         taille_ = taille
-    print(taille)
+    print("nouvelle taille:", taille)
     
     global historique, grille, compteur, case_libre, V
     grille = []
@@ -177,7 +177,6 @@ def nouvelle_taille():
     T.nouvelle_taille()
     taille = (T.x, T.y)
     taille_cellule = 500//max(taille)
-    print(taille)
     Recommencer(taille)
 
 def dessiner(grille):

@@ -3,33 +3,30 @@ from functools import partial
 import erreur as erreur
 
 def epurer(c):
-    characteres = ["1","2","3","4","5","6","7","8","9","0"]
+    characteres = ["1","2","3","4","5","6","7","8","9","0","."]
     r = ""
     for l in c:
         if l in characteres:
             r += l
     return r
 
-def confirmer(fen, xe, ye):
-
-    x_ = int(epurer(xe.get()))
-    y_ = int(epurer(ye.get()))
-
-    if x_ <= 0 or y_ <= 0:
-        erreur.erreur("ERREUR: entrée non valide", "la taille de la grille doit être strictement posisitive")
-        return
+def confirmer(fen_t, xe, ye):
 
     global x, y
-    x, y = x_, y_
+    x, y = int(epurer(xe.get())), int(epurer(ye.get()))
 
-    fen.destroy()
+    fen_t.quit()
+    return
 
 def nouvelle_taille():
-    fen = Tk()
-    fen.title("modification taille")
-    fen.geometry("400x150")
+    fen_t = Tk()
+    fen_t.title("modification taille")
+    fen_t.geometry("400x150")
+    
+    
+    Label(fen_t, text="ATTENTION: Des tailles au dessus de 50 peuvent gravement affecter les performances")
 
-    frame = Frame(fen)
+    frame = Frame(fen_t)
 
     xe = Entry(frame)
     xe.insert(0, "x = ")
@@ -37,14 +34,13 @@ def nouvelle_taille():
     ye = Entry(frame)
     ye.insert(0, "y = ")
     ye.pack()
-    confirm = Button(frame, text='confirmer', command=partial(confirmer, fen, xe, ye))
+    confirm = Button(frame, text='confirmer', command=partial(confirmer, fen_t, xe, ye))
     confirm.pack()
 
     frame.pack(expand=YES)
 
-    fen.mainloop()
-    global x, y
-    print(x, y)
+    fen_t.mainloop()
+    fen_t.destroy()
 
 x = 10
 y = 10
