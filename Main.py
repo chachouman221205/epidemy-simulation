@@ -20,9 +20,9 @@ def etat_suivant(L, nL, x, y, R, V):
         case_contamine(L, nL, x, y, R)
 
 def prochaine_etape(grille):
-    global R, V
-    x_max = len(grille[0])
-    y_max = len(grille)
+    global R, V, taille
+    x_max = taille[0]
+    y_max = taille[1]
     nouvelle_grille = grille
     nb_mort, nb_recovered, nb_safe, nb_infecte, nb_vaccine = 0, 0, 0, 0, 0
     
@@ -90,12 +90,13 @@ def Recommencer(taille_=None):
     if taille_ == None:
         global taille
         taille_ = taille
-    print("nouvelle taille:", taille)
+    print("Nouvelle simulation:")
+    print("- taille:", taille)
     
     global historique, grille, compteur, case_libre, V
     grille = []
     case_libre = list(range(taille_[0]*taille_[1]))
-    V = [[1 for y in range(taille_[1])] for x in range(taille_[0])]
+    V = [[1 for x in range(taille_[0])] for y in range(taille_[1])]
     for y in range(taille_[1]):
         ligne = []
         for x in range(taille_[0]):
