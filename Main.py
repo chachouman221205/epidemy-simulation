@@ -1,7 +1,7 @@
 import random
 from tkinter import *
-import regles 
-import erreur  
+import regles, erreur
+import taille as T
 import matplotlib.pyplot as plt
 
 def etat_suivant(L, nL, x, y, R, V):
@@ -14,8 +14,9 @@ def etat_suivant(L, nL, x, y, R, V):
             compteur.set(compteur.get()-1)
     elif L[y][x] == "I":
         L[y][x] = random.randint(R["recup_min"], R["recup_max"])
-    else:
+    elif L[y][x] == "R":
         case_oubli(L, nL, x, y, R)
+    elif L[y][x] == "S":
         case_contamine(L, nL, x, y, R)
 
 def prochaine_etape(grille):
@@ -50,7 +51,7 @@ def n_voisins_contamine(L, x, y):
     nb_voisins = 0
     for change_x in range(-1, 2):
         for change_y in range(-1, 2):
-            if 0 <= x + change_x < len(L) and 0 <= y + change_y < len(L):
+            if 0 <= x + change_x < len(L[0]) and 0 <= y + change_y < len(L):
                 if type(L[y + change_y][x + change_x]) == int:
                     nb_voisins += 1
     if type(L[y][x]) == int:
@@ -64,7 +65,7 @@ def case_contamine(L, nL, x, y, R):
     if case_est_contamine(L, x, y, R):
         nL[y][x] = "I"
         compteur.set(compteur.get()+1)
-        case_libre.remove(y*taille[1]+x)
+        case_libre.remove(y*taille[0]+x)
 
 def case_est_oubli(L, x, y, R):
     if L[y][x] == "R":
@@ -73,31 +74,37 @@ def case_oubli(L, nL, x, y, R):
     global taille
     if case_est_oubli(L, x, y, R):
         nL[y][x] = "S"
-        case_libre.append(y*taille[1]+x)
+        case_libre.append(y*taille[0]+x)
 
 def case_est_mort(L, x, y, R, V):
     if type(L[y][x]) == int:
         return random.random() < R["proba_mort"] * V[y][x]
+    return False
 def case_mort(L, nL, x, y, R, V):
     global compteur
     if case_est_mort(L, x, y, R, V):
         nL[y][x] = "M"
         compteur.set(compteur.get()-1)
 
-def Recommencer(taille):
-    global historique, grille, compteur, case_libre, taille_cellule
+def Recommencer(taille_=None):
+    if taille_ == None:
+        global taille
+        taille_ = taille
+    print(taille)
+    
+    global historique, grille, compteur, case_libre, V
     grille = []
-    case_libre = list(range(taille[0]*taille[1]))
-    for y in range(taille[1]):
+    case_libre = list(range(taille_[0]*taille_[1]))
+    V = [[1 for y in range(taille_[1])] for x in range(taille_[0])]
+    for y in range(taille_[1]):
         ligne = []
-        for x in range(taille[0]):
-            can1.create_rectangle(x*taille_cellule,y*taille_cellule,x*taille_cellule+taille_cellule,y*taille_cellule+taille_cellule,fill = 'white')
+        for x in range(taille_[0]):
             ligne.append("S")
         grille.append(ligne)
     historique = {"S": [], "M": [], "I": [], "R": [], "V": []}
     compteur.set(0)
     update_labels()
-
+    dessiner(grille)
     return grille
 
 def click(event):
@@ -108,27 +115,27 @@ def click(event):
     if mode == 0:
         if grille[y][x] == 'S':
             grille[y][x] = random.randint(R["recup_min"], R["recup_max"])
-            can1.create_rectangle(x*taille_cellule,y*taille_cellule,x*taille_cellule+taille_cellule,y*taille_cellule+taille_cellule,fill = 'red')
+            can1.create_rectangle(x*taille_cellule,y*taille_cellule,x*taille_cellule+taille_cellule,y*taille_cellule+taille_cellule,fill = 'red', width = 0)
             compteur.set(compteur.get()+1)
-            case_libre.remove(y*taille[1]+x)
+            case_libre.remove(y*taille[0]+x)
         else :
             erreur.erreur('Infection','Cette personne ne peut pas être infectée')
             
     elif mode == -1:
         if grille[y][x] != "M":
-            can1.create_rectangle(x*taille_cellule,y*taille_cellule,x*taille_cellule+taille_cellule,y*taille_cellule+taille_cellule,fill = 'black')
+            can1.create_rectangle(x*taille_cellule,y*taille_cellule,x*taille_cellule+taille_cellule,y*taille_cellule+taille_cellule,fill = 'black', width = 0)
             if type(grille[y][x])==int:
                 compteur.set(compteur.get()-1)
             elif grille[y][x] == "S":
-                case_libre.remove(y*taille[1]+x)
+                case_libre.remove(y*taille[0]+x)
             grille[y][x] = "M"
         else :
             erreur.erreur('Tuer','Cette personne ne peut pas être Tuée')
             
     elif mode == 1:
         if grille[y][x] != "S":
-            case_libre.append(y*taille[1]+x)
-            can1.create_rectangle(x*taille_cellule,y*taille_cellule,x*taille_cellule+taille_cellule,y*taille_cellule+taille_cellule,fill = 'white')
+            case_libre.append(y*taille[0]+x)
+            can1.create_rectangle(x*taille_cellule,y*taille_cellule,x*taille_cellule+taille_cellule,y*taille_cellule+taille_cellule,fill = 'white', width = 0)
             if type(grille[y][x])==int :
                 compteur.set(compteur.get()-1)
             grille[y][x] = "S"
@@ -136,11 +143,11 @@ def click(event):
             erreur.erreur('Soigner','Cette personne ne peut pas être Soignée')
     elif mode == 2:
         if grille[y][x] != "V":
-            can1.create_rectangle(x*taille_cellule,y*taille_cellule,x*taille_cellule+taille_cellule,y*taille_cellule+taille_cellule,fill = 'blue')
+            can1.create_rectangle(x*taille_cellule,y*taille_cellule,x*taille_cellule+taille_cellule,y*taille_cellule+taille_cellule,fill = 'blue', width = 0)
             if type(grille[y][x])==int :
                 compteur.set(compteur.get()-1)
             elif grille[y][x] == "S":
-                case_libre.remove(y*taille[1]+x)
+                case_libre.remove(y*taille[0]+x)
             grille[y][x] = "V"
         else :
             erreur.erreur('Vacciner','Cette personne ne peut pas être Vaccinée')
@@ -154,7 +161,7 @@ def infect():
         y = l//taille[1]
         grille[y][x] = random.randint(R["recup_min"], R["recup_max"])
         case_libre.remove(l)  
-        can1.create_rectangle(x*taille_cellule,y*taille_cellule,x*taille_cellule+taille_cellule,y*taille_cellule+taille_cellule,fill = 'red')
+        can1.create_rectangle(x*taille_cellule,y*taille_cellule,x*taille_cellule+taille_cellule,y*taille_cellule+taille_cellule,fill = 'red', width = 0)
         compteur.set(compteur.get()+1)
         update_labels()
     else:
@@ -164,6 +171,14 @@ def nouvelle_regle():
     global R 
     regles.nouvelle_regle()
     R = regles.R
+
+def nouvelle_taille():
+    global taille, taille_cellule
+    T.nouvelle_taille()
+    taille = (T.x, T.y)
+    taille_cellule = 500//max(taille)
+    print(taille)
+    Recommencer(taille)
 
 def dessiner(grille):
     can1.delete("all")
@@ -175,9 +190,9 @@ def dessiner(grille):
     for y in range(taille[1]):
         for x in range(taille[0]):
             if type(grille[y][x]) == int or grille[y][x] == "I":
-                can1.create_rectangle(x*taille_cellule,y*taille_cellule,x*taille_cellule+taille_cellule,y*taille_cellule+taille_cellule, fill='red', width=outline)
+                can1.create_rectangle(x*taille_cellule,y*taille_cellule,x*taille_cellule+taille_cellule,y*taille_cellule+taille_cellule, fill='red', width = 0)
             else:
-                can1.create_rectangle(x*taille_cellule,y*taille_cellule,x*taille_cellule+taille_cellule,y*taille_cellule+taille_cellule, fill=couleurs[grille[y][x]], width= outline)
+                can1.create_rectangle(x*taille_cellule,y*taille_cellule,x*taille_cellule+taille_cellule,y*taille_cellule+taille_cellule, fill=couleurs[grille[y][x]], width = 0)
 
 def simuler():
     global grille, flag, compteur
@@ -186,7 +201,7 @@ def simuler():
     if flag:
         if compteur.get() == 0:
             return
-        fen1.after(100, simuler)
+        fen1.after(10, simuler)
     else:
         flag = True
 def stop_simuler():
@@ -251,20 +266,20 @@ def afficher_graphique2():
 
 R = {"nb_voisins": 3, "recup_min": 8,"recup_max": 10, "proba_mort": 0.01, "proba_oubli": 0.1}
 
-taille = (9, 9)
-V = [[1 for y in range(taille[1])] for x in range(taille[0])] # Liste de vulnérabilité à la mort
-historique = {"S": [], "M": [], "I": [], "R": [], "V": []}
+taille = (50, 50)
+V = [] # Liste de vulnérabilité à la mort
+historique = {}
 couleurs = {"M":'black',"R":"light grey","S":"white","V":"blue"} 
-case_libre = list(range(taille[0]*taille[1]))  
+case_libre = []
 mode = 0
 flag = True
-taille_cellule = 300//max(taille)
+taille_cellule = 500//max(taille)
 
 fen1 = Tk()
 fen1.title('Simulation')
-fen1.geometry('500x500')
+fen1.geometry('1000x600')
 
-can1 = Canvas(fen1,bg='white',height=300,width=300)
+can1 = Canvas(fen1,bg='white',height=500,width=500)
 can1.grid(row=0,column=1)
 
 can2 = Canvas(fen1,bg='white',height=300,width=300)
@@ -294,11 +309,12 @@ menu1 = Menu(menubar, tearoff=0)
 menu1.add_command(label="Créer", command=nouvelle_regle)
 menu1.add_command(label="Editer", command=nouvelle_regle)
 menu1.add_separator()
-menu1.add_command(label="Quitter", command=quit)
+menu1.add_command(label="Quitter", command=fen1.destroy)
 menubar.add_cascade(label="Virus", menu=menu1)
 
 menu2 = Menu(menubar, tearoff=0)
 menu2.add_command(label="Modifier", command=nouvelle_regle)
+menu2.add_command(label="Taille", command=nouvelle_taille)
 menu2.add_command(label="Afficher le graphique", command=afficher_graphique2)
 menu2.add_command(label="Réinitialiser", command=Recommencer)
 menubar.add_cascade(label="Affichage", menu=menu2)

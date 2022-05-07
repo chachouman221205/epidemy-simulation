@@ -7,5 +7,4 @@ def erreur(titre, message):
     Label(fen, text=message).place(x=5,y=5)
     Button(fen, text="ok", command=fen.destroy).place(x=265,y=120,width=30)
     fen.mainloop()
-
-erreur("test", "juste un test")
+    return
