@@ -5,6 +5,9 @@ import erreur
 import matplotlib.pyplot as plt
 
 def etat_suivant(L, nL, x, y, R, V):
+"""
+Génère la liste contenant le statut de la case de coordonnées (x,y) mis à jour 
+"""
     if type(L[y][x]) == int:
         if L[y][x] >= 2:
             nL[y][x] = L[y][x]-1
@@ -19,6 +22,9 @@ def etat_suivant(L, nL, x, y, R, V):
         case_contamine(L, nL, x, y, R)
 
 def prochaine_etape(grille):
+"""
+Met à jour la grille et l'historique avec les données de la nouvelle liste
+"""
     global R, V
     x_max = len(grille[0])
     y_max = len(grille)
@@ -48,6 +54,9 @@ def prochaine_etape(grille):
     return nouvelle_grille
 
 def n_voisins_contamine(L, x, y):
+"""
+Renvoie le nombre de voisins infectés à côté d'une case de coordonnées (x,y)
+"""
     nb_voisins = 0
     for change_x in range(-1, 2):
         for change_y in range(-1, 2):
@@ -59,9 +68,15 @@ def n_voisins_contamine(L, x, y):
     return nb_voisins
 
 def case_est_contamine(L, x, y, R):
+"""
+Renvoie un booléen indiquant si la case de coordonnées (x,y) peut être contaminée
+"""
     return n_voisins_contamine(L, x, y)/R["nb_voisins"] > random.random() and L[y][x] == "S"
 
 def case_contamine(L, nL, x, y, R):
+"""
+Met à jour la case de coordonnées (x,y) par rapport à si elle est contaminée ou pas
+"""
     global compteur
     if case_est_contamine(L, x, y, R):
         nL[y][x] = "I"
@@ -70,29 +85,47 @@ def case_contamine(L, nL, x, y, R):
         
 
 def case_est_oubli(L, x, y, R):
+"""
+Renvoie un booléen indiquant si la case de coordonnées (x,y) peut perdre son immunité temporaire à l'infection
+"""
     if L[y][x] == "R":
         return random.random() < R["proba_oubli"]
 
 def case_oubli(L, nL, x, y, R):
+"""
+Met à jour la case de coordonnées (x,y) par rapport à si elle est pert son immunité temporaire à l'infection ou pas
+"""
     if case_est_oubli(L, x, y, R):
         nL[y][x] = "S"
         case_libre.append(y*10+x)
 
 def case_est_mort(L, x, y, R, V):
+"""
+Renvoie un booléen indiquant si la case de coordonnées (x,y) peut être tuée
+"""
     if type(L[y][x]) == int:
         return random.random() < R["proba_mort"] * V[y][x]
 
 def case_mort(L, nL, x, y, R, V):
+"""
+Met à jour la case de coordonnées (x,y) par rapport à si elle est morte ou pas
+"""
     global compteur
     if case_est_mort(L, x, y, R, V):
         nL[y][x] = "M"
         compteur.set(compteur.get()-1)
 
 def case_vaccine(L, nL, R):
+"""
+Met à jour la case de coordonnées (x,y) par rapport à si elle est vaccinée ou pas
+"""
     if flag_vaccination and random.random() < R["proba_vaccination"]:
         nL[random.randint(0, 9)][random.randint(0, 9)] = "V"
 
 def Recommencer():
+"""
+Renitialise la grille de propagation
+"""
     global historique, grille, compteur, case_libre
     grille = []
     case_libre = [e for e in range (0,100)] 
@@ -109,6 +142,9 @@ def Recommencer():
     return grille
 
 def click(event):
+"""
+Permet de cliquer sur une case pour en modifier l'état
+"""
     global compteur, grille, R, mode
     x = event.x//30
     y = event.y//30
@@ -155,6 +191,9 @@ def click(event):
     update_labels()
     
 def infect():
+"""
+Infecte une case au hasard
+"""
     global compteur, grille
     if len(case_libre) > 0:
         l = random.choice(case_libre)
@@ -174,6 +213,9 @@ def nouvelle_regle():
     R = regles.R
 
 def dessiner(grille):
+"""
+Affiche la grille sur Tkinter
+"""
     can1.delete("all")
     global couleurs
     for y in range (0,10):
@@ -184,6 +226,9 @@ def dessiner(grille):
                 can1.create_rectangle(x*30,y*30,x*30+30,y*30+30,fill = couleurs[grille[y][x]])
 
 def simuler():
+"""
+Met à jour constamment la grille tout en l'affichant jusqu'à que la fonction stop_simuler soit appelée (ligne 240)
+"""
     global grille, flag, compteur
     grille = prochaine_etape(grille)
     dessiner(grille)
@@ -194,10 +239,16 @@ def simuler():
     else:
         flag = True
 def stop_simuler():
+"""
+Arrête la simulation
+"""
     global flag
     flag = False
 
 def update_labels():
+"""
+Affiche le nombre des différents états
+"""
     global compteur, label_text, label_text2
     label_text.set("Nombre d'infectés: " + str(compteur.get()))
     
@@ -210,7 +261,8 @@ def update_labels():
             label_text3.set("Nombre de vaccinés: " + str(0))
     else:
         label_text3.set("Nombre de vaccinés: " + str(historique["V"][-1]))
-    
+
+# Les fonctions si dessous modifient l'état du click pour modifier l'état des cases
 def mode_tuer():
     global mode
     mode = -1
@@ -225,6 +277,9 @@ def mode_vacciner():
     mode = 2
 
 def afficher_graphique():
+"""
+Affiche le graphe de la progression de la propagation depuis le début
+"""
     global historique
     histo2 = {"I":[],"M":[],"R":[],"S":[]}
 
