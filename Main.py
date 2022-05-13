@@ -421,6 +421,7 @@ menu2 = Menu(menubar, tearoff=0)
 menu2.add_command(label="Modifier", command=nouvelle_regle)
 menu2.add_command(label="Afficher le graphique", command=afficher_graphique)
 menu2.add_command(label="Réinitialiser", command=Recommencer)
+menu2.add_command(label="Taille", command=nouvelle_taille)
 menubar.add_cascade(label="Affichage", menu=menu2)
 
 menu3 = Menu(menubar, tearoff=0)
