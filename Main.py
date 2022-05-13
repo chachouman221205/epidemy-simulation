@@ -2,6 +2,7 @@ import random
 from tkinter import *
 import regles, erreur
 import taille as T
+import preset as P
 import matplotlib.pyplot as plt
 
 def etat_suivant(L, nL, x, y, R, V):
@@ -21,13 +22,11 @@ def etat_suivant(L, nL, x, y, R, V):
 
 def prochaine_etape(grille):
     global R, V, taille
-    x_max = taille[0]
-    y_max = taille[1]
     nouvelle_grille = grille
     nb_mort, nb_recovered, nb_safe, nb_infecte, nb_vaccine = 0, 0, 0, 0, 0
     
-    for y in range(y_max):
-        for x in range(x_max):
+    for y in range(taille[0]):
+        for x in range(taille[1]):
             etat_suivant(grille, nouvelle_grille, x, y, R, V)
             if nouvelle_grille[y][x] == 'R':
                 nb_recovered += 1
@@ -155,11 +154,11 @@ def click(event):
     update_labels()
     
 def infect():
-    global compteur, grille, taille_cellule
+    global compteur, grille, taille_cellule, taille
     if len(case_libre) > 0:
         l = random.choice(case_libre)
-        x = l%taille[1]
-        y = l//taille[1]
+        x = l%taille[0]
+        y = l//taille[0]
         grille[y][x] = random.randint(R["recup_min"], R["recup_max"])
         case_libre.remove(l)  
         can1.create_rectangle(x*taille_cellule,y*taille_cellule,x*taille_cellule+taille_cellule,y*taille_cellule+taille_cellule,fill = 'red', width = 0)
@@ -174,11 +173,11 @@ def nouvelle_regle():
     R = regles.R
 
 def nouvelle_taille():
-    global taille, taille_cellule
+    global taille, taille_cellule, grille
     T.nouvelle_taille()
     taille = (T.x, T.y)
     taille_cellule = 500//max(taille)
-    Recommencer(taille)
+    grille = Recommencer(taille)
 
 def dessiner(grille):
     can1.delete("all")
@@ -262,6 +261,29 @@ def afficher_graphique2():
     plt.fill_between(axe_x, histo2["I"], [0 for x in axe_x], color="red")
     plt.show()
 
+
+def preset():
+    P.ouvrir()
+    file = P.file.read()
+    grille_tempo = [line.split(",") for line in file.split(";")]
+    for y in range(len(grille_tempo)):
+        for x in range(len(grille_tempo[0])):
+            try:
+                grille_tempo[y][x] = int(grille_tempo[y][x])
+            except ValueError:
+                pass
+    global taille, grille, taille_cellule
+    taille = (len(grille_tempo[0]), len(grille_tempo))
+    Recommencer(taille)
+    grille = grille_tempo
+    taille_cellule = 500//max(taille)
+    print(grille)
+    dessiner(grille)
+
+def sauvegarder():
+    global grille
+    P.save(grille)
+
 # Initialisation des variables
 
 R = {"nb_voisins": 3, "recup_min": 8,"recup_max": 10, "proba_mort": 0.01, "proba_oubli": 0.1}
@@ -298,6 +320,8 @@ grille = Recommencer(taille)
 bou3 = Button(can3,text='Infection',command=infect).grid(row=0,column=2, ipadx=30, ipady=10)
 bou4 = Button(can3,text='simuler',command=simuler).grid(row=0,column=3, ipadx=30, ipady=10)
 bou5 = Button(can3,text='pause',command=stop_simuler).grid(row=0,column=1, ipadx=30, ipady=10)
+bou6 = Button(can3,text='test',command=preset).grid(row=0,column=4, ipadx=30, ipady=10)
+bou7 = Button(can3,text='test2',command=sauvegarder).grid(row=0,column=5, ipadx=30, ipady=10)
 
 
 can1.bind("<Button-1>", click)
