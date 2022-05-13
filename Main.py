@@ -5,6 +5,9 @@ import taille as T
 import matplotlib.pyplot as plt
 
 def etat_suivant(L, nL, x, y, R, V):
+    """
+    Génère la liste contenant le statut de la case de coordonnées (x,y) mis à jour 
+    """
     if type(L[y][x]) == int:
         if L[y][x] >= 2:
             nL[y][x] = L[y][x]-1
@@ -21,13 +24,15 @@ def etat_suivant(L, nL, x, y, R, V):
 
 def prochaine_etape(grille):
     global R, V, taille
-    x_max = taille[0]
-    y_max = taille[1]
+    """
+    Met à jour la grille et l'historique avec les données de la nouvelle liste
+    """
     nouvelle_grille = grille
     nb_mort, nb_recovered, nb_safe, nb_infecte, nb_vaccine = 0, 0, 0, 0, 0
+    case_vaccine(grille, nouvelle_grille, R)
     
-    for y in range(y_max):
-        for x in range(x_max):
+    for y in range(taille[1]):
+        for x in range(taille[0]):
             etat_suivant(grille, nouvelle_grille, x, y, R, V)
             if nouvelle_grille[y][x] == 'R':
                 nb_recovered += 1
@@ -48,6 +53,9 @@ def prochaine_etape(grille):
     return nouvelle_grille
 
 def n_voisins_contamine(L, x, y):
+    """
+    Renvoie le nombre de voisins infectés à côté d'une case de coordonnées (x,y)
+    """
     nb_voisins = 0
     for change_x in range(-1, 2):
         for change_y in range(-1, 2):
@@ -59,8 +67,14 @@ def n_voisins_contamine(L, x, y):
     return nb_voisins
 
 def case_est_contamine(L, x, y, R):
+    """
+    Renvoie un booléen indiquant si la case de coordonnées (x,y) peut être contaminée
+    """
     return n_voisins_contamine(L, x, y)/R["nb_voisins"] > random.random() and L[y][x] == "S"
 def case_contamine(L, nL, x, y, R):
+    """
+    Met à jour la case de coordonnées (x,y) par rapport à si elle est contaminée ou pas
+    """
     global compteur, taille
     if case_est_contamine(L, x, y, R):
         nL[y][x] = "I"
@@ -68,23 +82,61 @@ def case_contamine(L, nL, x, y, R):
         case_libre.remove(y*taille[0]+x)
 
 def case_est_oubli(L, x, y, R):
+    """
+    Renvoie un booléen indiquant si la case de coordonnées (x,y) peut perdre son immunité temporaire à l'infection
+    """
     if L[y][x] == "R":
         return random.random() < R["proba_oubli"]
 def case_oubli(L, nL, x, y, R):
+    """
+    Met à jour la case de coordonnées (x,y) par rapport à si elle est pert son immunité temporaire à l'infection ou pas
+    """
     global taille
     if case_est_oubli(L, x, y, R):
         nL[y][x] = "S"
         case_libre.append(y*taille[0]+x)
 
 def case_est_mort(L, x, y, R, V):
+    """
+    Renvoie un booléen indiquant si la case de coordonnées (x,y) peut être tuée
+    """
     if type(L[y][x]) == int:
         return random.random() < R["proba_mort"] * V[y][x]
     return False
 def case_mort(L, nL, x, y, R, V):
+    """
+    Met à jour la case de coordonnées (x,y) par rapport à si elle est morte ou pas
+    """
     global compteur
     if case_est_mort(L, x, y, R, V):
         nL[y][x] = "M"
         compteur.set(compteur.get()-1)
+
+def case_vaccine(L, nL, R):
+    """
+    Met à jour la case de coordonnées (x,y) par rapport à si elle est vaccinée ou pas
+    """
+    if flag_vaccination and random.random() < R["proba_vaccination"]:
+        x, y = random.randint(0, 9), random.randint(0, 9)
+        while L[y][x] != "S" and L[y][x] != "R":
+            x, y = random.randint(0, 9), random.randint(0, 9)
+        nL[y][x] = "V"
+
+def vaccine():
+    """
+    Vaccine une case au hasard si possible
+    """
+    global compteur, grille, flag_vaccination
+    if len(case_libre) > 0 and flag_vaccination and random.random() < R["proba_vaccination"]:
+        l = random.choice(case_libre)
+        x = l%10
+        y = l//10
+        grille[y][x] = "V"
+        case_libre.remove(l)
+        can1.create_rectangle(x*30,y*30,x*30+30,y*30+30,fill = 'blue')
+        update_labels()
+    elif not flag_vaccination:
+        flag_vaccination = True
 
 def Recommencer(taille_=None):
     if taille_ == None:
@@ -109,6 +161,9 @@ def Recommencer(taille_=None):
     return grille
 
 def click(event):
+    """
+    Permet de cliquer sur une case pour en modifier l'état
+    """
     global compteur, grille, R, mode, taille_cellule
     x = event.x//taille_cellule
     y = event.y//taille_cellule
@@ -155,6 +210,9 @@ def click(event):
     update_labels()
     
 def infect():
+    """
+    Infecte une case au hasard
+    """
     global compteur, grille, taille_cellule
     if len(case_libre) > 0:
         l = random.choice(case_libre)
@@ -181,6 +239,9 @@ def nouvelle_taille():
     Recommencer(taille)
 
 def dessiner(grille):
+    """
+    Affiche la grille sur Tkinter
+    """
     can1.delete("all")
     global couleurs, taille, taille_cellule
     if taille_cellule <= 5:
@@ -195,6 +256,9 @@ def dessiner(grille):
                 can1.create_rectangle(x*taille_cellule,y*taille_cellule,x*taille_cellule+taille_cellule,y*taille_cellule+taille_cellule, fill=couleurs[grille[y][x]], width = 0)
 
 def simuler():
+    """
+    Met à jour constamment la grille tout en l'affichant jusqu'à que la fonction stop_simuler soit appelée (ligne 241)
+    """
     global grille, flag, compteur
     grille = prochaine_etape(grille)
     dessiner(grille)
@@ -205,13 +269,30 @@ def simuler():
     else:
         flag = True
 def stop_simuler():
+    """
+    Arrête la simulation
+    """
     global flag
     flag = False
 
 def update_labels():
-    global compteur, label_text
-    label_text.set("Nombre d'infectés: " + str(compteur.get()))   
+    """
+    Affiche le nombre des différents états
+    """
+    global compteur, label_text, label_text2
+    label_text.set("Nombre d'infectés: " + str(compteur.get()))
     
+    if len(historique["M"])==0:
+        label_text2.set("Nombre de morts: " + str(0))
+    else:
+        label_text2.set("Nombre de morts: " + str(historique["M"][-1]))
+        
+    if len(historique["M"])==0:
+            label_text3.set("Nombre de vaccinés: " + str(0))
+    else:
+        label_text3.set("Nombre de vaccinés: " + str(historique["V"][-1]))
+
+# Les fonctions si dessous modifient l'état du click pour modifier l'état des cases
 def mode_tuer():
     global mode
     mode = -1
@@ -226,6 +307,9 @@ def mode_vacciner():
     mode = 2
 
 def afficher_graphique1():
+    """
+    Affiche le graphe de la progression de la propagation depuis le début
+    """
     global historique
     histo2 = {"I":[],"M":[],"R":[],"S":[]}
 
@@ -262,7 +346,25 @@ def afficher_graphique2():
     plt.fill_between(axe_x, histo2["I"], [0 for x in axe_x], color="red")
     plt.show()
 
+def panneau_control():
+    global fen2, can3
+    fen2 = Tk()
+    fen2.title('Panneau_control')
+    fen2.geometry('500x500')
+    
+    can3 = Canvas(fen2,bg='white',height=300,width=300)
+    can3.grid(row=1,column=1)
+    
+    bou3 = Button(can3,text='Infection',command=infect).grid(row=0,column=2, ipadx=30, ipady=10)
+    bou4 = Button(can3,text='simuler',command=simuler).grid(row=0,column=3, ipadx=30, ipady=10)
+    bou5 = Button(can3,text='pause',command=stop_simuler).grid(row=0,column=1, ipadx=30, ipady=10)
+    bou6 = Button(can3,text='Vacciner',command=vaccine).grid(row=0,column=4, ipadx=30, ipady=10)
+
+
+
+
 # Initialisation des variables
+
 
 R = {"nb_voisins": 3, "recup_min": 8,"recup_max": 10, "proba_mort": 0.01, "proba_oubli": 0.1}
 
@@ -274,6 +376,7 @@ case_libre = []
 mode = 0
 flag = True
 taille_cellule = 500//max(taille)
+flag_vaccination = False
 
 fen1 = Tk()
 fen1.title('Simulation')
@@ -285,20 +388,26 @@ can1.grid(row=0,column=1)
 can2 = Canvas(fen1,bg='white',height=300,width=300)
 can2.grid(row=0,column=2)
 
-can3 = Canvas(fen1,bg='white',height=300,width=300)
-can3.grid(row=1,column=1)
-
+can4 = Canvas(fen1,bg='white',height=300,width=300)
+can4.grid(row=1,column=1)
 
 compteur = IntVar(value=0)
 label_text = StringVar(value="Nombre d'inféctés: " + str(compteur.get()))
-Label(can2,textvariable=label_text).grid(row=4,column=1, ipadx=20)
+Label(can2,textvariable=label_text).grid(row=4,column=1, ipadx=30)
+
 
 grille = Recommencer(taille)
 
-bou3 = Button(can3,text='Infection',command=infect).grid(row=0,column=2, ipadx=30, ipady=10)
-bou4 = Button(can3,text='simuler',command=simuler).grid(row=0,column=3, ipadx=30, ipady=10)
-bou5 = Button(can3,text='pause',command=stop_simuler).grid(row=0,column=1, ipadx=30, ipady=10)
+label_text2 = StringVar(value="Nombre d'inféctés: " + str(0))
+Label(can2,textvariable=label_text2).grid(row=5,column=1, ipadx=30)
 
+
+label_text3 = StringVar(value="Nombre de vaccinés: " + str(0))
+Label(can2,textvariable=label_text3).grid(row=6,column=1, ipadx=30)
+
+bou1 = Button(can4,text='Infection',command=panneau_control).grid(row=0,column=2, ipadx=30, ipady=10)
+
+grille = Recommencer()
 
 can1.bind("<Button-1>", click)
 
