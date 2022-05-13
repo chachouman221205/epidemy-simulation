@@ -403,7 +403,7 @@ Label(can2,textvariable=label_text2).grid(row=5,column=1, ipadx=30)
 label_text3 = StringVar(value="Nombre de vaccinés: " + str(0))
 Label(can2,textvariable=label_text3).grid(row=6,column=1, ipadx=30)
 
-bou1 = Button(can4,text='Infection',command=panneau_control).grid(row=0,column=2, ipadx=30, ipady=10)
+bou1 = Button(can4,text='Panneau de contrôle',command=panneau_control).grid(row=0,column=2, ipadx=30, ipady=10)
 can1.bind("<Button-1>", click)
 
 #création de la barre de menu
