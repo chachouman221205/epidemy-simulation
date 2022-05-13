@@ -366,7 +366,7 @@ def panneau_control():
 # Initialisation des variables
 
 
-R = {"nb_voisins": 3, "recup_min": 8,"recup_max": 10, "proba_mort": 0.01, "proba_oubli": 0.1}
+R = {"nb_voisins": 3, "recup_min": 8,"recup_max": 10, "proba_mort": 0.01, "proba_oubli": 0.1, "proba_vaccination": 0.1}
 
 taille = (50, 50)
 V = [] # Liste de vulnérabilité à la mort
