@@ -378,39 +378,35 @@ flag = True
 taille_cellule = 500//max(taille)
 flag_vaccination = False
 
+# création de la fenêtre
+
 fen1 = Tk()
 fen1.title('Simulation')
-fen1.geometry('1000x600')
+fen1.geometry('500x500')
 
-can1 = Canvas(fen1,bg='white',height=500,width=500)
+#création des différents canvas
+
+can1 = Canvas(fen1,bg='white',height=300,width=300)
 can1.grid(row=0,column=1)
-
 can2 = Canvas(fen1,bg='white',height=300,width=300)
 can2.grid(row=0,column=2)
-
 can4 = Canvas(fen1,bg='white',height=300,width=300)
 can4.grid(row=1,column=1)
+
+#création des compteurs
 
 compteur = IntVar(value=0)
 label_text = StringVar(value="Nombre d'inféctés: " + str(compteur.get()))
 Label(can2,textvariable=label_text).grid(row=4,column=1, ipadx=30)
-
-
-grille = Recommencer(taille)
-
 label_text2 = StringVar(value="Nombre d'inféctés: " + str(0))
 Label(can2,textvariable=label_text2).grid(row=5,column=1, ipadx=30)
-
-
 label_text3 = StringVar(value="Nombre de vaccinés: " + str(0))
 Label(can2,textvariable=label_text3).grid(row=6,column=1, ipadx=30)
 
 bou1 = Button(can4,text='Infection',command=panneau_control).grid(row=0,column=2, ipadx=30, ipady=10)
-
-grille = Recommencer()
-
 can1.bind("<Button-1>", click)
 
+#création de la barre de menu
 
 menubar = Menu(fen1)
 
@@ -418,13 +414,12 @@ menu1 = Menu(menubar, tearoff=0)
 menu1.add_command(label="Créer", command=nouvelle_regle)
 menu1.add_command(label="Editer", command=nouvelle_regle)
 menu1.add_separator()
-menu1.add_command(label="Quitter", command=fen1.destroy)
+menu1.add_command(label="Quitter", command=quit)
 menubar.add_cascade(label="Virus", menu=menu1)
 
 menu2 = Menu(menubar, tearoff=0)
 menu2.add_command(label="Modifier", command=nouvelle_regle)
-menu2.add_command(label="Taille", command=nouvelle_taille)
-menu2.add_command(label="Afficher le graphique", command=afficher_graphique2)
+menu2.add_command(label="Afficher le graphique", command=afficher_graphique)
 menu2.add_command(label="Réinitialiser", command=Recommencer)
 menubar.add_cascade(label="Affichage", menu=menu2)
 
@@ -437,4 +432,5 @@ menubar.add_cascade(label="Pointeur", menu=menu3)
 
 fen1.config(menu=menubar)
 
+grille = Recommencer()
 mainloop()
