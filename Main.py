@@ -120,7 +120,26 @@ def case_vaccine(L, nL, R):
     Met à jour la case de coordonnées (x,y) par rapport à si elle est vaccinée ou pas
     """
     if flag_vaccination and random.random() < R["proba_vaccination"]:
-        nL[random.randint(0, 9)][random.randint(0, 9)] = "V"
+        x, y = random.randint(0, 9), random.randint(0, 9)
+        while L[y][x] != "S" and L[y][x] != "R":
+            x, y = random.randint(0, 9), random.randint(0, 9)
+        nL[y][x] = "V"
+
+def vaccine():
+    """
+    Vaccine une case au hasard si possible
+    """
+    global compteur, grille, flag_vaccination
+    if len(case_libre) > 0 and flag_vaccination and random.random() < R["proba_vaccination"]:
+        l = random.choice(case_libre)
+        x = l%10
+        y = l//10
+        grille[y][x] = "V"
+        case_libre.remove(l)
+        can1.create_rectangle(x*30,y*30,x*30+30,y*30+30,fill = 'blue')
+        update_labels()
+    elif not flag_vaccination:
+        flag_vaccination = True
 
 def Recommencer():
     """
@@ -310,7 +329,7 @@ def panneau_control():
     bou3 = Button(can3,text='Infection',command=infect).grid(row=0,column=2, ipadx=30, ipady=10)
     bou4 = Button(can3,text='simuler',command=simuler).grid(row=0,column=3, ipadx=30, ipady=10)
     bou5 = Button(can3,text='pause',command=stop_simuler).grid(row=0,column=1, ipadx=30, ipady=10)
-    bou6 = Button(can3,text='Vacciner',command=stop_simuler).grid(row=0,column=4, ipadx=30, ipady=10)
+    bou6 = Button(can3,text='Vacciner',command=vaccine).grid(row=0,column=4, ipadx=30, ipady=10)
 
 # Initialisation des variables
 
@@ -321,6 +340,7 @@ couleurs = {"M":'black',"R":"light grey","S":"white","V":"blue"}
 case_libre = [e for e in range (0,100)]  
 mode = 0
 flag = True
+flag_vaccination = False
 
 fen1 = Tk()
 fen1.title('Simulation')
