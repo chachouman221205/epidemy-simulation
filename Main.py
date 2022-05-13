@@ -386,7 +386,7 @@ fen1.geometry('500x500')
 
 #création des différents canvas
 
-can1 = Canvas(fen1,bg='white',height=300,width=300)
+can1 = Canvas(fen1,bg='white',height=500,width=500)
 can1.grid(row=0,column=1)
 can2 = Canvas(fen1,bg='white',height=300,width=300)
 can2.grid(row=0,column=2)
