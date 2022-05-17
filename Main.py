@@ -89,6 +89,7 @@ def case_mort(L, nL, x, y, R, V):
         compteur.set(compteur.get()-1)
 
 def case_vaccine(L, nL, R):
+    global flag_vaccination
     if flag_vaccination and random.random() < R["proba_vaccination"]:
         nL[random.randint(0, 9)][random.randint(0, 9)] = "V"
 
@@ -184,13 +185,13 @@ def dessiner(grille):
                 can1.create_rectangle(x*30,y*30,x*30+30,y*30+30,fill = couleurs[grille[y][x]])
 
 def simuler():
-    global grille, flag, compteur
+    global grille, flag, compteur, can3
     grille = prochaine_etape(grille)
     dessiner(grille)
     if flag:
         if compteur.get() == 0:
             return
-        fen1.after(10, simuler)
+        fen1.after(1000//vitesse.get()**2, simuler)
     else:
         flag = True
 def stop_simuler():
@@ -244,7 +245,7 @@ def afficher_graphique():
         plt.show()
 
 def panneau_control():
-    global fen2, can3
+    global fen2, can3, vitesse
     fen2 = Tk()
     fen2.title('Panneau_control')
     fen2.geometry('500x500')
@@ -257,6 +258,9 @@ def panneau_control():
     bou5 = Button(can3,text='pause',command=stop_simuler).grid(row=0,column=1, ipadx=30, ipady=10)
     bou6 = Button(can3,text='Vacciner',command=stop_simuler).grid(row=0,column=4, ipadx=30, ipady=10)
 
+    vitesse = Scale(can3,label="Vitesse de simulation",orient='horizontal',from_=1,to=10,tickinterval=0.1)
+    vitesse.grid(row=1,column=1,columnspan=4,ipadx=120,ipady=10)
+
 # Initialisation des variables
 
 R = {"nb_voisins": 3, "recup_min": 8,"recup_max": 10, "proba_mort": 0.01, "proba_oubli": 0.1, "proba_vaccination": 0.1}
@@ -266,6 +270,8 @@ couleurs = {"M":'black',"R":"light grey","S":"white","V":"blue"}
 case_libre = [e for e in range (0,100)]  
 mode = 0
 flag = True
+flag_vaccination=False
+vitesse = None
 
 fen1 = Tk()
 fen1.title('Simulation')
@@ -290,7 +296,7 @@ Label(can2,textvariable=label_text2).grid(row=5,column=1, ipadx=30)
 label_text3 = StringVar(value="Nombre de vaccinés: " + str(0))
 Label(can2,textvariable=label_text3).grid(row=6,column=1, ipadx=30)
 
-bou1 = Button(can4,text='Infection',command=panneau_control).grid(row=0,column=2, ipadx=30, ipady=10)
+bou1 = Button(can4,text='paneau de controle',command=panneau_control).grid(row=0,column=2, ipadx=30, ipady=10)
 
 grille = Recommencer()
 
