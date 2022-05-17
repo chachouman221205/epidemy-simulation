@@ -116,6 +116,7 @@ def case_vaccine(L, nL, R):
     """
     Met à jour la case de coordonnées (x,y) par rapport à si elle est vaccinée ou pas
     """
+    global flag_vaccination
     if flag_vaccination and random.random() < R["proba_vaccination"]:
         x, y = random.randint(0, 9), random.randint(0, 9)
         while L[y][x] != "S" and L[y][x] != "R":
@@ -265,7 +266,7 @@ def simuler():
     if flag:
         if compteur.get() == 0:
             return
-        fen1.after(10, simuler)
+        fen1.after(1000//vitesse.get()**2, simuler)
     else:
         flag = True
 def stop_simuler():
@@ -347,7 +348,7 @@ def afficher_graphique2():
     plt.show()
 
 def panneau_control():
-    global fen2, can3
+    global fen2, can3, vitesse
     fen2 = Tk()
     fen2.title('Panneau_control')
     fen2.geometry('750x600')
@@ -363,6 +364,9 @@ def panneau_control():
 
 
 
+    vitesse = Scale(can3,label="Vitesse de simulation",orient='horizontal',from_=1,to=10,tickinterval=0.1)
+    vitesse.grid(row=1,column=1,columnspan=4,ipadx=120,ipady=10)
+
 # Initialisation des variables
 
 
@@ -375,6 +379,7 @@ couleurs = {"M":'black',"R":"light grey","S":"white","V":"blue"}
 case_libre = []
 mode = 0
 flag = True
+flag_vaccination=False
 taille_cellule = 500//max(taille)
 flag_vaccination = False
 
@@ -404,6 +409,9 @@ label_text3 = StringVar(value="Nombre de vaccinés: " + str(0))
 Label(can2,textvariable=label_text3).grid(row=6,column=1, ipadx=30)
 
 bou1 = Button(can4,text='Panneau de contrôle',command=panneau_control).grid(row=0,column=2, ipadx=30, ipady=10)
+
+grille = Recommencer()
+
 can1.bind("<Button-1>", click)
 
 #création de la barre de menu
@@ -419,7 +427,7 @@ menubar.add_cascade(label="Virus", menu=menu1)
 
 menu2 = Menu(menubar, tearoff=0)
 menu2.add_command(label="Modifier", command=nouvelle_regle)
-menu2.add_command(label="Afficher le graphique", command=afficher_graphique)
+menu2.add_command(label="Afficher le graphique", command=afficher_graphique2)
 menu2.add_command(label="Réinitialiser", command=Recommencer)
 menu2.add_command(label="Taille", command=nouvelle_taille)
 menubar.add_cascade(label="Affichage", menu=menu2)
