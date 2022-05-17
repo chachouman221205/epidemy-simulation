@@ -266,7 +266,7 @@ def simuler():
     if flag:
         if compteur.get() == 0:
             return
-        fen1.after(1000//vitesse.get()**2, simuler)
+        fen1.after(1000//vitesse.get()**2-10, simuler)
     else:
         flag = True
 def stop_simuler():
@@ -361,16 +361,13 @@ def panneau_control():
     bou5 = Button(can3,text='pause',command=stop_simuler).grid(row=0,column=1, ipadx=30, ipady=10)
     bou6 = Button(can3,text='Vacciner',command=vaccine).grid(row=0,column=4, ipadx=30, ipady=10)
 
-
-
-
     vitesse = Scale(can3,label="Vitesse de simulation",orient='horizontal',from_=1,to=10,tickinterval=0.1)
     vitesse.grid(row=1,column=1,columnspan=4,ipadx=120,ipady=10)
 
 # Initialisation des variables
 
 
-R = {"nb_voisins": 3, "recup_min": 8,"recup_max": 10, "proba_mort": 0.01, "proba_oubli": 0.1, "proba_vaccination": 0.1}
+R = {"nb_voisins": 3, "recup_min": 8,"recup_max": 10, "proba_mort": 0, "proba_oubli": 0.1, "proba_vaccination": 0.1}
 
 taille = (50, 50)
 V = [] # Liste de vulnérabilité à la mort
@@ -387,7 +384,7 @@ flag_vaccination = False
 
 fen1 = Tk()
 fen1.title('Simulation')
-fen1.geometry('500x500')
+fen1.geometry('700x600')
 
 #création des différents canvas
 
