@@ -3,7 +3,7 @@ from functools import partial
 import erreur
 
 def confirmer(fen, infection, recuperation_min, recuperation_max, mortalite, oubli,vaccin):
-    infection = infection.get()
+    infection = 8-infection.get()
     recuperation_min = int(recuperation_min.get())
     recuperation_max = int(recuperation_max.get())
     mortalite = mortalite.get()
@@ -29,15 +29,15 @@ def confirmer(fen, infection, recuperation_min, recuperation_max, mortalite, oub
 
 def nouvelle_regle():
     fen = Tk()
-    infection = Scale(fen, orient='horizontal', from_=0,to=8, resolution=0.1, tickinterval=0.5, length=350, label="Nombre minimum de voisin pour être infecté")
+    infection = Scale(fen, orient='horizontal', from_=0,to=8, resolution=0.1, tickinterval=0.5, length=350, label="Infectuosité")
     infection.pack()
     recuperation_min = Scale(fen, orient='horizontal', from_=0,to=10, resolution=1, tickinterval=1, length=350, label="Nombre minimum de jours pour être soigné")
     recuperation_min.pack()
     recuperation_max = Scale(fen, orient='horizontal', from_=0,to=10, resolution=1, tickinterval=1, length=350, label="Nombre maximum de jours pour être soigné")
     recuperation_max.pack()
-    mortalite = Scale(fen, orient='horizontal', from_=0,to=1, resolution=0.01, tickinterval=0.25, length=350, label="Chance de mourir du virus chaque jour")
+    mortalite = Scale(fen, orient='horizontal', from_=0,to=1, resolution=0.01, tickinterval=0.25, length=350, label="Mortalité du virus")
     mortalite.pack()
-    oubli = Scale(fen, orient='horizontal', from_=0,to=1, resolution=0.01, tickinterval=0.25, length=350, label="Chance de perdre les défenses immunitaires")
+    oubli = Scale(fen, orient='horizontal', from_=0,to=1, resolution=0.01, tickinterval=0.25, length=350, label="Probabilité de perdre les défenses immunitaires")
     oubli.pack()
     vaccin = Scale(fen, orient='horizontal', from_=0,to=1, resolution=0.01, tickinterval=0.25, length=350, label="Probabilité qu'une case se vaccine")
     vaccin.pack()
