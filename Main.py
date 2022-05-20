@@ -257,17 +257,26 @@ def dessiner(grille):
             else:
                 can1.create_rectangle(x*taille_cellule,y*taille_cellule,x*taille_cellule+taille_cellule,y*taille_cellule+taille_cellule, fill=couleurs[grille[y][x]], width = 0)
 
-def simuler():
-    """
-    Met à jour constamment la grille tout en l'affichant jusqu'à que la fonction stop_simuler soit appelée (ligne 241)
-    """
+def lancer_simulation():
+'''
+Démarre la simulation
+'''
+    global flag
+    if not flag:
+        flag = True
+        simulation()
+
+def simulation():
+'''
+Continue la simulation
+'''
     global grille, flag, compteur
-    grille = prochaine_etape(grille)
-    dessiner(grille)
     if flag:
+        grille = prochaine_etape(grille)
+        dessiner(grille)
         if compteur.get() == 0:
             return
-        fen1.after(1000//vitesse.get()**2-10, simuler)
+        fen1.after(1000//vitesse.get()**2-10, simulation)
     else:
         flag = True
 def stop_simuler():
@@ -362,7 +371,7 @@ def panneau_control():
     can3.grid(row=1,column=1)
     
     bou3 = Button(can3,text='Infection',command=infect).grid(row=0,column=2, ipadx=30, ipady=10)
-    bou4 = Button(can3,text='simuler',command=simuler).grid(row=0,column=3, ipadx=30, ipady=10)
+    bou4 = Button(can3,text='simuler',command=lancer_simulation).grid(row=0,column=3, ipadx=30, ipady=10)
     bou5 = Button(can3,text='pause',command=stop_simuler).grid(row=0,column=1, ipadx=30, ipady=10)
     bou6 = Button(can3,text='Vacciner',command=vaccine).grid(row=0,column=4, ipadx=30, ipady=10)
 
