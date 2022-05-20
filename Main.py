@@ -362,21 +362,27 @@ def afficher_graphique2():
     plt.show()
 
 def panneau_control():
-    global fen2, can3, vitesse
-    fen2 = Tk()
-    fen2.title('Panneau_control')
-    fen2.geometry('450x100')
-    
-    can3 = Canvas(fen2,bg='white',height=300,width=300)
-    can3.grid(row=1,column=1)
-    
-    bou3 = Button(can3,text='Infection',command=infect).grid(row=0,column=2, ipadx=30, ipady=10)
-    bou4 = Button(can3,text='simuler',command=lancer_simulation).grid(row=0,column=3, ipadx=30, ipady=10)
-    bou5 = Button(can3,text='pause',command=stop_simuler).grid(row=0,column=1, ipadx=30, ipady=10)
-    bou6 = Button(can3,text='Vacciner',command=vaccine).grid(row=0,column=4, ipadx=30, ipady=10)
+    global fen2, can3, vitesse, panneau_control_open
+    if not panneau_control_open:
+        panneau_control_open = True
+        fen2 = Tk()
+        fen2.title('Panneau_control')
+        fen2.geometry('750x600')
 
-    vitesse = Scale(can3,label="Vitesse de simulation",orient='horizontal',from_=1,to=10,tickinterval=0.1)
-    vitesse.grid(row=1,column=1,columnspan=4,ipadx=170,ipady=10)
+        can3 = Canvas(fen2,bg='white',height=300,width=300)
+        can3.grid(row=1,column=1)
+
+        bou3 = Button(can3,text='Infection',command=infect).grid(row=0,column=2, ipadx=30, ipady=10)
+        bou4 = Button(can3,text='simuler',command=lancer_simulation).grid(row=0,column=3, ipadx=30, ipady=10)
+        bou5 = Button(can3,text='pause',command=stop_simuler).grid(row=0,column=1, ipadx=30, ipady=10)
+        bou6 = Button(can3,text='Vacciner',command=vaccine).grid(row=0,column=4, ipadx=30, ipady=10)
+
+        vitesse = Scale(can3,label="Vitesse de simulation",orient='horizontal',from_=1,to=10,tickinterval=0.1)
+        vitesse.grid(row=1,column=1,columnspan=4,ipadx=120,ipady=10)
+
+def quitter():
+    global fen1
+    fen1.destroy()
 
 # Initialisation des variables
 
@@ -392,6 +398,7 @@ mode = 0
 flag = True
 taille_cellule = 500//max(taille)
 flag_vaccination = False
+panneau_control_open = False
 
 # création de la fenêtre
 
@@ -431,7 +438,7 @@ menubar = Menu(fen1)
 menu1 = Menu(menubar, tearoff=0)
 menu1.add_command(label="Editer Virus", command=nouvelle_regle)
 menu1.add_separator()
-menu1.add_command(label="Quitter", command=quit)
+menu1.add_command(label="Quitter", command=quitter)
 menubar.add_cascade(label="Virus", menu=menu1)
 
 menu2 = Menu(menubar, tearoff=0)
