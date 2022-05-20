@@ -381,8 +381,10 @@ def panneau_control():
         vitesse.grid(row=1,column=1,columnspan=4,ipadx=120,ipady=10)
 
 def quitter():
-    global fen1
+    global fen1, fen2, panneau_control_open
     fen1.destroy()
+    if panneau_control_open:
+        fen2.destroy
 
 # Initialisation des variables
 
