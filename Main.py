@@ -29,7 +29,8 @@ def prochaine_etape(grille):
     """
     nouvelle_grille = grille
     nb_mort, nb_recovered, nb_safe, nb_infecte, nb_vaccine = 0, 0, 0, 0, 0
-    case_vaccine(grille, nouvelle_grille, R)
+    
+    vaccine()
     
     for y in range(taille[1]):
         for x in range(taille[0]):
@@ -116,26 +117,26 @@ def case_vaccine(L, nL, R):
     """
     Met à jour la case de coordonnées (x,y) par rapport à si elle est vaccinée ou pas
     """
-    global flag_vaccination
+    global flag_vaccination, taille
     if flag_vaccination and random.random() < R["proba_vaccination"]:
-        x, y = random.randint(0, 9), random.randint(0, 9)
+        x, y = random.randint(0, taille[0]), random.randint(0, taille[1])
         while L[y][x] != "S" and L[y][x] != "R":
-            x, y = random.randint(0, 9), random.randint(0, 9)
+            x, y = random.randint(0, taille[0]), random.randint(0, taille[1])
         nL[y][x] = "V"
 
 def vaccine():
     """
     Vaccine une case au hasard si possible
     """
-    global compteur, grille, flag_vaccination
+    global compteur, grille, flag_vaccination, taille
     if len(case_libre) > 0 and flag_vaccination and random.random() < R["proba_vaccination"]:
         l = random.choice(case_libre)
-        x = l%10
-        y = l//10
+        x = l%taille[0]
+        y = l//taille[0]
         grille[y][x] = "V"
         case_libre.remove(l)
-        can1.create_rectangle(x*30,y*30,x*30+30,y*30+30,fill = 'blue')
         update_labels()
+        dessiner(grille)
     elif not flag_vaccination:
         flag_vaccination = True
 
@@ -312,7 +313,7 @@ def afficher_graphique1():
     Affiche le graphe de la progression de la propagation depuis le début
     """
     global historique
-    histo2 = {"I":[],"M":[],"R":[],"S":[]}
+    histo2 = {"I":[],"M":[],"R":[],"S":[],"V":[]}
 
     axe_x = list(range(len(historique["I"])))
     
@@ -321,8 +322,10 @@ def afficher_graphique1():
         histo2["R"].append(histo2["M"][-1] + historique["R"][x])
         histo2["I"].append(histo2["R"][-1] + historique["I"][x])
         histo2["S"].append(histo2["I"][-1] + historique["S"][x])
+        histo2["V"].append(histo2["S"][-1] + historique["V"][x])
 
     plt.axes().set_facecolor("0.15")
+    plt.fill_between(axe_x, histo2["S"], histo2["V"], color = "blue")
     plt.fill_between(axe_x, histo2["I"], histo2["S"], color = "white")
     plt.fill_between(axe_x, histo2["R"], histo2["I"], color = "red")
     plt.fill_between(axe_x, histo2["M"], histo2["R"], color = "grey")
@@ -331,17 +334,19 @@ def afficher_graphique1():
 
 def afficher_graphique2():
     global historique
-    histo2 = {"I":[], "S":[], "R":[]}
+    histo2 = {"I":[], "S":[], "R":[], "V":[]}
     axe_x = list(range(len(historique["I"])))
 
     for x in axe_x:
-        total = historique["I"][x] + historique["S"][x] + historique["R"][x]
+        total = historique["I"][x] + historique["S"][x] + historique["R"][x] + historique["V"][x]
 
         histo2["I"].append(historique["I"][x]/total)
         histo2["S"].append(historique["S"][x]/total +histo2["I"][-1])
         histo2["R"].append(historique["R"][x]/total +histo2["S"][-1])
+        histo2["V"].append(historique["V"][x]/total +histo2["R"][-1])
 
     plt.axes().set_facecolor("0.15")
+    plt.fill_between(axe_x, histo2["V"], histo2["R"], color="blue")
     plt.fill_between(axe_x, histo2["R"], histo2["S"], color="grey")
     plt.fill_between(axe_x, histo2["S"], histo2["I"], color="white")
     plt.fill_between(axe_x, histo2["I"], [0 for x in axe_x], color="red")
@@ -362,21 +367,20 @@ def panneau_control():
     bou6 = Button(can3,text='Vacciner',command=vaccine).grid(row=0,column=4, ipadx=30, ipady=10)
 
     vitesse = Scale(can3,label="Vitesse de simulation",orient='horizontal',from_=1,to=10,tickinterval=0.1)
-    vitesse.grid(row=1,column=1,columnspan=4,ipadx=120,ipady=10)
+    vitesse.grid(row=1,column=1,columnspan=4,ipadx=170,ipady=10)
 
 # Initialisation des variables
 
 
-R = {"nb_voisins": 3, "recup_min": 8,"recup_max": 10, "proba_mort": 0, "proba_oubli": 0.1, "proba_vaccination": 0.1}
+R = {"nb_voisins": 3, "recup_min": 8,"recup_max": 10, "proba_mort": 0.01, "proba_oubli": 0.1, "proba_vaccination": 0.1}
 
-taille = (50, 50)
+taille = (25, 25)
 V = [] # Liste de vulnérabilité à la mort
 historique = {}
 couleurs = {"M":'black',"R":"light grey","S":"white","V":"blue"} 
 case_libre = []
 mode = 0
 flag = True
-flag_vaccination=False
 taille_cellule = 500//max(taille)
 flag_vaccination = False
 
@@ -424,7 +428,8 @@ menubar.add_cascade(label="Virus", menu=menu1)
 
 menu2 = Menu(menubar, tearoff=0)
 menu2.add_command(label="Modifier", command=nouvelle_regle)
-menu2.add_command(label="Afficher le graphique", command=afficher_graphique2)
+menu2.add_command(label="Afficher le graphique 1", command=afficher_graphique1)
+menu2.add_command(label="Afficher le graphique 2", command=afficher_graphique2)
 menu2.add_command(label="Réinitialiser", command=Recommencer)
 menu2.add_command(label="Taille", command=nouvelle_taille)
 menubar.add_cascade(label="Affichage", menu=menu2)
