@@ -38,23 +38,31 @@ def ouvrir():
     fen_l.mainloop()
     fen_l.destroy()
 
-def confirmer2(fen_s, nom_, grille):
-    resultat = ""
+def confirmer2(fen_s, nom_, grille, V, case_libre):
+    taille = str(len(grille[0])) + "," + str(len(grille))
+    n_grille = ""
+    n_V = ""
+    n_case_libre = ""
+
     for y in grille:
         for x in y:
-            resultat += str(x) + ","
-        resultat = resultat[0:-1] + ";"
-    resultat = resultat[0:-1]
-    import os
+            n_grille += str(x)
+    for y in V:
+        for x in y:
+            n_V += str(x)
+    for case in case_libre:
+        n_case_libre += str(case) + ","
+    n_case_libre = n_case_libre[:-1]
+    
     try:
         open(f"saves/{nom_.get()}.txt", "x")
     except FileExistsError as err:
         erreur.erreur("sauvegarde existante", "Une sauvegarde éxiste déjà sous ce nom.")
-    open(f"saves/{nom_.get()}.txt", "w").write(resultat)
+    open(f"saves/{nom_.get()}.txt", "w").write(n_grille +"\n"+ taille +"\n"+ n_V +"\n"+ n_case_libre)
     fen_s.quit()
     return
 
-def save(grille):
+def save(grille, V, case_libre):
     fen_s = Tk()
     fen_s.title("sauvegarder la simulation")
     fen_s.geometry("400x150")
@@ -68,7 +76,7 @@ def save(grille):
     
     frame2.pack(side=TOP)
     
-    confirm = Button(frame, text='confirmer', command=partial(confirmer2, fen_s, nom, grille))
+    confirm = Button(frame, text='confirmer', command=partial(confirmer2, fen_s, nom, grille, V, case_libre))
     confirm.pack(side=BOTTOM)
 
     frame.pack(expand=YES)
