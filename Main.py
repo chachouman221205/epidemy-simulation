@@ -423,7 +423,7 @@ historique = {}
 couleurs = {"M":'black',"R":"light grey","S":"white","V":"blue"} 
 case_libre = []
 mode = 0
-flag = Flase
+flag = False
 taille_cellule = 500//max(taille)
 flag_vaccination = False
 
