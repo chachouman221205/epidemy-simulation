@@ -2,6 +2,8 @@ import random
 from tkinter import *
 import regles, erreur
 import taille as T
+import preset
+
 import matplotlib.pyplot as plt
 
 def etat_suivant(L, nL, x, y, R, V):
