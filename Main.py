@@ -126,9 +126,6 @@ def vaccine():
         grille[y][x] = "V"
         case_libre.remove(l)
         update_labels()
-        dessiner(grille)
-    elif not flag_vaccination:
-        flag_vaccination = True
 
 def infect():
     """
