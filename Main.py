@@ -114,6 +114,9 @@ def case_mort(L, nL, x, y, R, V):
         nL[y][x] = "M"
         compteur.set(compteur.get()-1)
 
+def lancer_vaccination():
+    flag_vaccination = True
+    vaccine()
 def vaccine():
     """
     Vaccine une case au hasard si possible
@@ -395,7 +398,7 @@ def panneau_control():
     Button(can3,text='Infection',command=infect).grid(row=0,column=2, ipadx=30, ipady=10)
     Button(can3,text='simuler',command=lancer_simulation).grid(row=0,column=3, ipadx=30, ipady=10)
     Button(can3,text='pause',command=stop_simuler).grid(row=0,column=1, ipadx=30, ipady=10)
-    Button(can3,text='Vacciner',command=vaccine).grid(row=0,column=4, ipadx=30, ipady=10)
+    Button(can3,text='Vacciner',command=lancer_vaccination).grid(row=0,column=4, ipadx=30, ipady=10)
 
     Button(can3,text='Sauvegarder',command=save).grid(row=2, column=1, columnspan=2, ipadx=60, ipady=10)
     Button(can3,text='Charger',command=load).grid(row=2, column=3, columnspan=2, ipadx=60, ipady=10)
