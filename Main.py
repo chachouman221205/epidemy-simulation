@@ -113,17 +113,6 @@ def case_mort(L, nL, x, y, R, V):
         nL[y][x] = "M"
         compteur.set(compteur.get()-1)
 
-def case_vaccine(L, nL, R):
-    """
-    Met à jour la case de coordonnées (x,y) par rapport à si elle est vaccinée ou pas
-    """
-    global flag_vaccination, taille
-    if flag_vaccination and random.random() < R["proba_vaccination"]:
-        x, y = random.randint(0, taille[0]), random.randint(0, taille[1])
-        while L[y][x] != "S" and L[y][x] != "R":
-            x, y = random.randint(0, taille[0]), random.randint(0, taille[1])
-        nL[y][x] = "V"
-
 def vaccine():
     """
     Vaccine une case au hasard si possible
@@ -139,6 +128,23 @@ def vaccine():
         dessiner(grille)
     elif not flag_vaccination:
         flag_vaccination = True
+
+def infect():
+    """
+    Infecte une case au hasard
+    """
+    global compteur, grille, taille_cellule
+    if len(case_libre) > 0:
+        l = random.choice(case_libre)
+        x = l%taille[1]
+        y = l//taille[1]
+        grille[y][x] = random.randint(R["recup_min"], R["recup_max"])
+        case_libre.remove(l)  
+        can1.create_rectangle(x*taille_cellule,y*taille_cellule,x*taille_cellule+taille_cellule,y*taille_cellule+taille_cellule,fill = 'red', width = 0)
+        compteur.set(compteur.get()+1)
+        update_labels()
+    else:
+        erreur.erreur('Infection','Aucune case ne peut être infectée')
 
 def Recommencer(taille_=None):
     if taille_ == None:
@@ -161,78 +167,11 @@ def Recommencer(taille_=None):
     update_labels()
     dessiner(grille)
     return grille
-
-def click(event):
-    """
-    Permet de cliquer sur une case pour en modifier l'état
-    """
-    global compteur, grille, R, mode, taille_cellule
-    x = event.x//taille_cellule
-    y = event.y//taille_cellule
-    
-    if mode == 0:
-        if grille[y][x] == 'S':
-            grille[y][x] = random.randint(R["recup_min"], R["recup_max"])
-            can1.create_rectangle(x*taille_cellule,y*taille_cellule,x*taille_cellule+taille_cellule,y*taille_cellule+taille_cellule,fill = 'red', width = 0)
-            compteur.set(compteur.get()+1)
-            case_libre.remove(y*taille[0]+x)
-        else :
-            erreur.erreur('Infection','Cette personne ne peut pas être infectée')
-            
-    elif mode == -1:
-        if grille[y][x] != "M":
-            can1.create_rectangle(x*taille_cellule,y*taille_cellule,x*taille_cellule+taille_cellule,y*taille_cellule+taille_cellule,fill = 'black', width = 0)
-            if type(grille[y][x])==int:
-                compteur.set(compteur.get()-1)
-            elif grille[y][x] == "S":
-                case_libre.remove(y*taille[0]+x)
-            grille[y][x] = "M"
-        else :
-            erreur.erreur('Tuer','Cette personne ne peut pas être Tuée')
-            
-    elif mode == 1:
-        if grille[y][x] != "S":
-            case_libre.append(y*taille[0]+x)
-            can1.create_rectangle(x*taille_cellule,y*taille_cellule,x*taille_cellule+taille_cellule,y*taille_cellule+taille_cellule,fill = 'white', width = 0)
-            if type(grille[y][x])==int :
-                compteur.set(compteur.get()-1)
-            grille[y][x] = "S"
-        else :
-            erreur.erreur('Soigner','Cette personne ne peut pas être Soignée')
-    elif mode == 2:
-        if grille[y][x] != "V":
-            can1.create_rectangle(x*taille_cellule,y*taille_cellule,x*taille_cellule+taille_cellule,y*taille_cellule+taille_cellule,fill = 'blue', width = 0)
-            if type(grille[y][x])==int :
-                compteur.set(compteur.get()-1)
-            elif grille[y][x] == "S":
-                case_libre.remove(y*taille[0]+x)
-            grille[y][x] = "V"
-        else :
-            erreur.erreur('Vacciner','Cette personne ne peut pas être Vaccinée')
-    update_labels()
-    
-def infect():
-    """
-    Infecte une case au hasard
-    """
-    global compteur, grille, taille_cellule
-    if len(case_libre) > 0:
-        l = random.choice(case_libre)
-        x = l%taille[1]
-        y = l//taille[1]
-        grille[y][x] = random.randint(R["recup_min"], R["recup_max"])
-        case_libre.remove(l)  
-        can1.create_rectangle(x*taille_cellule,y*taille_cellule,x*taille_cellule+taille_cellule,y*taille_cellule+taille_cellule,fill = 'red', width = 0)
-        compteur.set(compteur.get()+1)
-        update_labels()
-    else:
-        erreur.erreur('Infection','Aucune case ne peut être infectée')
-    
+      
 def nouvelle_regle():
     global R 
     regles.nouvelle_regle()
     R = regles.R
-
 def nouvelle_taille():
     global taille, taille_cellule
     T.nouvelle_taille()
@@ -293,6 +232,55 @@ def update_labels():
             label_text3.set("Nombre de vaccinés: " + str(0))
     else:
         label_text3.set("Nombre de vaccinés: " + str(historique["V"][-1]))
+
+def click(event):
+    """
+    Permet de cliquer sur une case pour en modifier l'état
+    """
+    global compteur, grille, R, mode, taille_cellule
+    x = event.x//taille_cellule
+    y = event.y//taille_cellule
+    
+    if mode == 0:
+        if grille[y][x] == 'S':
+            grille[y][x] = random.randint(R["recup_min"], R["recup_max"])
+            can1.create_rectangle(x*taille_cellule,y*taille_cellule,x*taille_cellule+taille_cellule,y*taille_cellule+taille_cellule,fill = 'red', width = 0)
+            compteur.set(compteur.get()+1)
+            case_libre.remove(y*taille[0]+x)
+        else :
+            erreur.erreur('Infection','Cette personne ne peut pas être infectée')
+            
+    elif mode == -1:
+        if grille[y][x] != "M":
+            can1.create_rectangle(x*taille_cellule,y*taille_cellule,x*taille_cellule+taille_cellule,y*taille_cellule+taille_cellule,fill = 'black', width = 0)
+            if type(grille[y][x])==int:
+                compteur.set(compteur.get()-1)
+            elif grille[y][x] == "S":
+                case_libre.remove(y*taille[0]+x)
+            grille[y][x] = "M"
+        else :
+            erreur.erreur('Tuer','Cette personne ne peut pas être Tuée')
+            
+    elif mode == 1:
+        if grille[y][x] != "S":
+            case_libre.append(y*taille[0]+x)
+            can1.create_rectangle(x*taille_cellule,y*taille_cellule,x*taille_cellule+taille_cellule,y*taille_cellule+taille_cellule,fill = 'white', width = 0)
+            if type(grille[y][x])==int :
+                compteur.set(compteur.get()-1)
+            grille[y][x] = "S"
+        else :
+            erreur.erreur('Soigner','Cette personne ne peut pas être Soignée')
+    elif mode == 2:
+        if grille[y][x] != "V":
+            can1.create_rectangle(x*taille_cellule,y*taille_cellule,x*taille_cellule+taille_cellule,y*taille_cellule+taille_cellule,fill = 'blue', width = 0)
+            if type(grille[y][x])==int :
+                compteur.set(compteur.get()-1)
+            elif grille[y][x] == "S":
+                case_libre.remove(y*taille[0]+x)
+            grille[y][x] = "V"
+        else :
+            erreur.erreur('Vacciner','Cette personne ne peut pas être Vaccinée')
+    update_labels()
 
 # Les fonctions si dessous modifient l'état du click pour modifier l'état des cases
 def mode_tuer():
