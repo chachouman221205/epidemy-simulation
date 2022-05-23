@@ -196,19 +196,19 @@ def dessiner(grille):
             else:
                 can1.create_rectangle(x*taille_cellule,y*taille_cellule,x*taille_cellule+taille_cellule,y*taille_cellule+taille_cellule, fill=couleurs[grille[y][x]], width = 0)
 
-def simuler():
-    """
-    Met à jour constamment la grille tout en l'affichant jusqu'à que la fonction stop_simuler soit appelée (ligne 241)
-    """
+def lancer_simulation():
+    global flag
+    if not flag:
+        flag = True
+        simulation()
+def simulation():
     global grille, flag, compteur
-    grille = prochaine_etape(grille)
-    dessiner(grille)
     if flag:
+        grille = prochaine_etape(grille)
+        dessiner(grille)
         if compteur.get() == 0:
             return
-        fen1.after(1000//vitesse.get()**2-10, simuler)
-    else:
-        flag = True
+        fen1.after(1000//vitesse.get()**2-10, simulation)
 def stop_simuler():
     """
     Arrête la simulation
