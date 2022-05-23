@@ -389,7 +389,7 @@ def panneau_control():
     global fen2, can3, vitesse
     fen2 = Tk()
     fen2.title('Panneau_control')
-    fen2.geometry('450x100')
+    fen2.geometry('450x250')
     fen2.iconbitmap("virus.ico")
     
     can3 = Canvas(fen2,bg='white',height=300,width=300)
