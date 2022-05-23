@@ -1,8 +1,7 @@
 import random
 from tkinter import *
-import regles, erreur
+import regles, erreur, preset
 import taille as T
-import preset
 
 import matplotlib.pyplot as plt
 
@@ -397,7 +396,7 @@ def panneau_control():
     can3.grid(row=1,column=1)
     
     Button(can3,text='Infection',command=infect).grid(row=0,column=2, ipadx=30, ipady=10)
-    Button(can3,text='simuler',command=simuler).grid(row=0,column=3, ipadx=30, ipady=10)
+    Button(can3,text='simuler',command=lancer_simulation).grid(row=0,column=3, ipadx=30, ipady=10)
     Button(can3,text='pause',command=stop_simuler).grid(row=0,column=1, ipadx=30, ipady=10)
     Button(can3,text='Vacciner',command=vaccine).grid(row=0,column=4, ipadx=30, ipady=10)
 
