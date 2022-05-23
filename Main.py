@@ -404,6 +404,12 @@ def panneau_control():
     vitesse = Scale(can3,label="Vitesse de simulation",orient='horizontal',from_=1,to=10,tickinterval=0.1)
     vitesse.grid(row=1,column=1,columnspan=4,ipadx=170,ipady=10)
 
+def quitter():
+    global fen1, fen2, panneau_control_open
+    fen1.destroy()
+    if panneau_control_open:
+        fen2.destroy()
+
 # Initialisation des variables
 
 
