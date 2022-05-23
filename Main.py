@@ -2,7 +2,7 @@ import random
 from tkinter import *
 import regles, erreur
 import taille as T
-#import matplotlib.pyplot as plt
+import matplotlib.pyplot as plt
 
 def etat_suivant(L, nL, x, y, R, V):
     """
@@ -324,13 +324,13 @@ def afficher_graphique1():
         histo2["S"].append(histo2["I"][-1] + historique["S"][x])
         histo2["V"].append(histo2["S"][-1] + historique["V"][x])
 
-    #plt.axes().set_facecolor("0.15")
-    #plt.fill_between(axe_x, histo2["S"], histo2["V"], color = "blue")
-    #plt.fill_between(axe_x, histo2["I"], histo2["S"], color = "white")
-    #plt.fill_between(axe_x, histo2["R"], histo2["I"], color = "red")
-    #plt.fill_between(axe_x, histo2["M"], histo2["R"], color = "grey")
-    #plt.fill_between(axe_x, histo2["M"], [0 for x in axe_x], color ="black")
-    #plt.show()
+    plt.axes().set_facecolor("0.15")
+    plt.fill_between(axe_x, histo2["S"], histo2["V"], color = "blue")
+    plt.fill_between(axe_x, histo2["I"], histo2["S"], color = "white")
+    plt.fill_between(axe_x, histo2["R"], histo2["I"], color = "red")
+    plt.fill_between(axe_x, histo2["M"], histo2["R"], color = "grey")
+    plt.fill_between(axe_x, histo2["M"], [0 for x in axe_x], color ="black")
+    plt.show()
 
 def afficher_graphique2():
     global historique
@@ -345,12 +345,12 @@ def afficher_graphique2():
         histo2["R"].append(historique["R"][x]/total +histo2["S"][-1])
         histo2["V"].append(historique["V"][x]/total +histo2["R"][-1])
 
-    #plt.axes().set_facecolor("0.15")
-    #plt.fill_between(axe_x, histo2["V"], histo2["R"], color="blue")
-    #plt.fill_between(axe_x, histo2["R"], histo2["S"], color="grey")
-    #plt.fill_between(axe_x, histo2["S"], histo2["I"], color="white")
-    #plt.fill_between(axe_x, histo2["I"], [0 for x in axe_x], color="red")
-    #plt.show()
+    plt.axes().set_facecolor("0.15")
+    plt.fill_between(axe_x, histo2["V"], histo2["R"], color="blue")
+    plt.fill_between(axe_x, histo2["R"], histo2["S"], color="grey")
+    plt.fill_between(axe_x, histo2["S"], histo2["I"], color="white")
+    plt.fill_between(axe_x, histo2["I"], [0 for x in axe_x], color="red")
+    plt.show()
 
 def panneau_control():
     global fen2, can3, vitesse
@@ -361,11 +361,14 @@ def panneau_control():
     can3 = Canvas(fen2,bg='white',height=300,width=300)
     can3.grid(row=1,column=1)
     
-    bou3 = Button(can3,text='Infection',command=infect).grid(row=0,column=2, ipadx=30, ipady=10)
-    bou4 = Button(can3,text='simuler',command=simuler).grid(row=0,column=3, ipadx=30, ipady=10)
-    bou5 = Button(can3,text='pause',command=stop_simuler).grid(row=0,column=1, ipadx=30, ipady=10)
-    bou6 = Button(can3,text='Vacciner',command=vaccine).grid(row=0,column=4, ipadx=30, ipady=10)
+    Button(can3,text='Infection',command=infect).grid(row=0,column=2, ipadx=30, ipady=10)
+    Button(can3,text='simuler',command=simuler).grid(row=0,column=3, ipadx=30, ipady=10)
+    Button(can3,text='pause',command=stop_simuler).grid(row=0,column=1, ipadx=30, ipady=10)
+    Button(can3,text='Vacciner',command=vaccine).grid(row=0,column=4, ipadx=30, ipady=10)
 
+    Button(can3,text='Sauvegarder',command=save).grid(row=2, column=1, columnspan=2, ipadx=60, ipady=10)
+    Button(can3,text='Charger',command=load).grid(row=2, column=3, columnspan=2, ipadx=60, ipady=10)
+    
     vitesse = Scale(can3,label="Vitesse de simulation",orient='horizontal',from_=1,to=10,tickinterval=0.1)
     vitesse.grid(row=1,column=1,columnspan=4,ipadx=170,ipady=10)
 
