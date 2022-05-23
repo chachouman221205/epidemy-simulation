@@ -391,6 +391,7 @@ def panneau_control():
     fen2 = Tk()
     fen2.title('Panneau_control')
     fen2.geometry('450x100')
+    fen2.iconbitmap("virus.ico")
     
     can3 = Canvas(fen2,bg='white',height=300,width=300)
     can3.grid(row=1,column=1)
@@ -432,6 +433,7 @@ flag_vaccination = False
 fen1 = Tk()
 fen1.title('Simulation')
 fen1.geometry('700x600')
+fen1.iconbitmap("virus.ico")
 
 #création des différents canvas
 
