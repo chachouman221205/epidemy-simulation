@@ -352,6 +352,50 @@ def afficher_graphique2():
     plt.fill_between(axe_x, histo2["I"], [0 for x in axe_x], color="red")
     plt.show()
 
+def save():
+    global grille, V
+    preset.save(grille, V, case_libre)
+
+def load():
+    global grille, taille, taille_cellule, V, case_libre
+
+    preset.ouvrir()
+    file = preset.file.read().split("\n")
+    taille = file[1].split(",")
+    taille = int(taille[0]), int(taille[1])
+    taille_cellule = 500//max(taille)
+
+    case_libre = [int(case) for case in file[3].split(",")]
+
+    x, y = 0, 0
+    grille = []
+    ligne = []
+    V = []
+    ligne_V = []
+    chiffres = ['0','1','2','3','4','5','6','7','8','9']
+    while x < taille[0] or y < taille[1]-1:
+
+        if x == taille[0]:
+            x = 0
+            y += 1
+            grille.append(ligne)
+            V.append(ligne_V)
+            ligne = []
+            ligne_V = []
+        
+        case = file[0][y*taille[0]+x]
+        if case in chiffres:
+            ligne.append(int(case))
+        else:
+            ligne.append(case)
+        ligne_V.append(float(file[2][y*taille[0]+x]))
+
+        x += 1
+    grille.append(ligne)
+    V.append(ligne_V)
+
+    dessiner(grille)
+    
 def panneau_control():
     global fen2, can3, vitesse
     fen2 = Tk()
