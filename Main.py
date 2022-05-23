@@ -454,7 +454,7 @@ Label(can2,textvariable=label_text).grid(row=4,column=1)
 label_text2 = StringVar(value="Nombre d'inféctés: " + str(0))
 Label(can2,textvariable=label_text2).grid(row=5,column=1)
 label_text3 = StringVar(value="Nombre de vaccinés: " + str(0))
-Label(can2,textvariable=label_text3).grid(row=6,column=1)
+Label(can2,textvariable=label_text3).grid(row=6,column=1, padx=30)
 
 bou1 = Button(can4,text='Panneau de contrôle',command=panneau_control).grid(row=0,column=2, ipadx=30, ipady=10)
 
